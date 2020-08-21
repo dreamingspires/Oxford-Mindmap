@@ -1,8 +1,9 @@
 from server import db
 from sqlalchemy.types import Text
-from enum import Enum
 from depot.fields.sqlalchemy import UploadedFileField
 from depot.fields.specialized.image import UploadedImageWithThumb
+import uuid 
+from enum import Enum
 
 # Define types
 LEN_UUID = 32
@@ -36,18 +37,21 @@ class Base(db.Model):
 
 class Trigger(Base):
     __tablename__ = 'trigger_warnings'
-    warning = db.Column(db.Enum(TriggerWarning), primary_key=True)
+    warning = db.Column(db.Enum(TriggerWarning))
     story_id = db.Column(db.String(LEN_UUID), db.ForeignKey('stories.id'),
         nullable=False)
     story = db.relationship('Story', backref='trigger_warnings')
 
-
 class Story(Base):
     __tablename__ = 'stories'
     title = db.Column(Text(), nullable=False)
+    author = db.Column(Text())
     display_image = db.Column(UploadedFileField( \
         upload_type=UploadedImageWithThumb))
     description = db.Column(Text(), nullable=False)
     text = db.Column(Text(), nullable=False)
     latitude = db.Column(db.Numeric(10,7))
     longitude = db.Column(db.Numeric(10,7))
+
+    def __repr__(self):
+        return f'<Story "{self.title}" {self.id}>'
