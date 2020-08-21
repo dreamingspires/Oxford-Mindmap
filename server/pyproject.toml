@@ -8,6 +8,9 @@ authors = ["Edd Salkield <edd@salkield.uk>"]
 python = "^3.8"
 Flask = "^1.1.2"
 Flask-Admin = "^1.5.6"
+Flask-SQLAlchemy = "^2.4.4"
+filedepot = "^0.8.0"
+pillow = "^7.2.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
