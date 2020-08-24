@@ -1,9 +1,10 @@
 from flask import render_template, request, redirect, url_for
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
+import json
 
 from server import app, db
-from server.models import User
+from server.models import User, Story
 from server.forms import LoginForm
 
 @app.route('/')
@@ -42,3 +43,24 @@ def generate():
     db.session.add(user)
     db.session.commit()
     return('Generation complete')
+
+@app.route('/api/get_stories')
+def get_stories():
+    def filter_story(d):
+        permitted_keys = ['title', 'author', 'description', 'text', 'latitude',
+            'longitude', 'trigger_warnings']
+        d2 = {k: v for k,v in d.items() if k in permitted_keys}
+        for k in permitted_keys:
+            if k not in d2:
+                d2[k] = None
+        if 'display_image' in d and d['display_image'] is not None:
+            d2['display_image'] = d['display_image'].url
+            d2['thumbnail'] = d['display_image'].thumb_url
+        else:
+            d2['display_image'] = None
+            d2['thumbnail'] = None
+        return d2
+
+    stories = Story.query.all()
+    d = {story.id: filter_story(story.__dict__) for story in stories}
+    return json.dumps(d, indent=2)

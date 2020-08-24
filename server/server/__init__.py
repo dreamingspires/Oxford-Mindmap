@@ -78,3 +78,13 @@ admin.add_view(UserView(User, db.session))
 
 # Build the database
 db.create_all()
+
+# Update the database with defaults if specified
+if 'GENERATE_TEST_DB' in app.config and app.config['GENERATE_TEST_DB']:
+    # Create a test user
+    user = User.query.filter_by(id='admin').first()
+    if not user:
+        user = User(id='admin', password=generate_password_hash('admin'))
+        db.session.add(user)
+        db.session.commit()
+

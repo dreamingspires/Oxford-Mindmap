@@ -1,7 +1,7 @@
 [x] admin panel authentication
         https://github.com/flask-admin/Flask-Admin/tree/master/examples/auth
-[ ] API to expose database
+[x] API to expose database
 [x] File uploading (for the image)
         https://flask-admin.readthedocs.io/en/latest/api/mod_form_upload/
         https://github.com/flask-admin/Flask-Admin/tree/master/examples/forms-files-images
-[ ] Generate test database if GENERATE_TEST_DB=True in config.py
+[x] Generate test database if GENERATE_TEST_DB=True in config.py
