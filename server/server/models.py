@@ -4,6 +4,7 @@ from depot.fields.sqlalchemy import UploadedFileField
 from depot.fields.specialized.image import UploadedImageWithThumb
 import uuid 
 from enum import Enum
+from flask_login import UserMixin
 
 # Define types
 LEN_UUID = 32
@@ -55,3 +56,7 @@ class Story(Base):
 
     def __repr__(self):
         return f'<Story "{self.title}" {self.id}>'
+
+class User(UserMixin, Base):
+    __tablename__ = 'users'
+    password    = db.Column(db.String(192), nullable=False)
