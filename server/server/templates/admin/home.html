@@ -1,0 +1,32 @@
+{% extends 'admin/master.html' %}
+
+{% macro render_field(field) %}
+  <dt>{{ field.label }}
+  <dd>{{ field(**kwargs)|safe }}
+  {% if field.errors %}
+    <ul class=errors>
+    {% for error in field.errors %}
+      <li>{{ error }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+  </dd>
+{% endmacro %}
+
+{% block body %}
+  {% if current_user.is_authenticated %}
+  <p>Welcome to the Oxford Mindmap Admin panel</p>
+  <a href={{ url_for('admin_logout') }}>Log out</a>
+  {% else %}
+  <div>
+    <form method=post action="{{ login_url }}" role="form" accept-charset="UTF-8">
+        {{ form.csrf_token }}
+        {{ render_field(form.username) }}
+        {{ render_field(form.password) }}
+        {{ render_field(form.remember_me) }}
+        {{ render_field(form.submit) }}
+      </form>
+  </div>
+  {% endif %}
+  
+{% endblock %}
