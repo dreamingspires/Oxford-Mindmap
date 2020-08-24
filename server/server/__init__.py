@@ -6,8 +6,11 @@ from flask_admin.contrib.sqla import ModelView
 from flask_login import LoginManager, current_user
 from werkzeug.security import generate_password_hash
 from wtforms import PasswordField
+from flask_wtf.file import FileField
+import PIL
 
 from server.admin_views import AdminHomeView
+from server.extensions.forms import validate_image
 
 # Initialise Flask app
 app = Flask(__name__)
@@ -52,7 +55,24 @@ class UserView(BaseView):
         if form.password2.data is not None:
             User.password = generate_password_hash(form.password2.data)
 
-admin.add_view(BaseView(Story, db.session))
+class StoryView(BaseView):
+    column_exclude_list = ['display_image']
+    form_extra_fields = {
+        'display_image2': FileField('Display Image', [validate_image])
+    }
+
+    def on_model_change(self, form, User, is_created):
+        if form.display_image2.data:
+            try:
+                User.display_image = form.display_image2.data
+            except PIL.UnidentifiedImageError:
+                raise UnsupportedMediaType( \
+                    description="Uploaded file is not an image")
+        else:
+            print('no image supplied')
+
+
+admin.add_view(StoryView(Story, db.session))
 admin.add_view(BaseView(Trigger, db.session))
 admin.add_view(UserView(User, db.session))
 
