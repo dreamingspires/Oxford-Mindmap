@@ -50,17 +50,22 @@ def get_stories():
         permitted_keys = ['title', 'author', 'description', 'text', 'latitude',
             'longitude', 'trigger_warnings']
         d2 = {k: v for k,v in d.items() if k in permitted_keys}
-        for k in permitted_keys:
-            if k not in d2:
-                d2[k] = None
         if 'display_image' in d and d['display_image'] is not None:
             d2['display_image'] = d['display_image'].url
             d2['thumbnail'] = d['display_image'].thumb_url
         else:
             d2['display_image'] = None
             d2['thumbnail'] = None
+        if 'trigger_warnings' in d and d['trigger_warnings'] is not None:
+            d2['trigger_warnings'] = [{'name': t.warning.name, \
+                                       'value': t.warning.value} \
+                for t in d['trigger_warnings']]
+        for k in permitted_keys:
+            if k not in d2:
+                d2[k] = None
         return d2
 
     stories = Story.query.all()
-    d = {story.id: filter_story(story.__dict__) for story in stories}
+    d = {story.id: filter_story({**story.__dict__, \
+        **{'trigger_warnings': story.trigger_warnings}}) for story in stories}
     return json.dumps(d, indent=2)
