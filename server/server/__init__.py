@@ -98,8 +98,16 @@ class StoryView(BaseView):
                     # Remove the trigger warning
                     db.session.delete(existing_triggers[TriggerWarning[name]])
 
+    def delete_model(self, model):
+        trigger_warnings = model.trigger_warnings
+        for t in trigger_warnings:
+            db.session.delete(t)
+        db.session.delete(model)
+        db.session.commit()
+
 
 admin.add_view(StoryView(Story, db.session))
+admin.add_view(BaseView(Trigger, db.session))
 admin.add_view(UserView(User, db.session))
 
 # Build the database
