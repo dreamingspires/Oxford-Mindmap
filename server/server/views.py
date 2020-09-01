@@ -9,7 +9,7 @@ from server.forms import LoginForm
 
 @app.route('/')
 def index():
-    return 'test'
+    return ''
 
 @app.route('/admin_login', methods=['GET', 'POST'])
 def admin_login():
