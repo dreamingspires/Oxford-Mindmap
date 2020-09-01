@@ -48,8 +48,11 @@ def load_user(uid):
 DepotManager.configure('default', {'depot.storage_path': '/tmp/depot/'})
 app.wsgi_app = DepotManager.make_middleware(app.wsgi_app)
 
-if app.config['PREFIX']:
-    app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix=app.config['PREFIX'])
+try:
+    if app.config['PREFIX']:
+        app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix=app.config['PREFIX'])
+except KeyError:
+    pass
 
 from server.models import Trigger, Story, TriggerWarning
 from server import views
