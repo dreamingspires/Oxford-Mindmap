@@ -12,6 +12,21 @@ import PIL
 from server.admin_views import AdminHomeView
 from server.extensions.forms import validate_image
 
+class PrefixMiddleware(object):
+    def __init__(self, app, prefix=''):
+        self.app = app
+        self.prefix = prefix
+
+    def __call__(self, environ, start_response):
+
+        if environ['PATH_INFO'].startswith(self.prefix):
+            environ['PATH_INFO'] = environ['PATH_INFO'][len(self.prefix):]
+            environ['SCRIPT_NAME'] = self.prefix
+            return self.app(environ, start_response)
+        else:
+            start_response('404', [('Content-Type', 'text/plain')])
+            return ["This url does not belong to the app.".encode()]
+
 # Initialise Flask app
 app = Flask(__name__)
 app.config.from_object('config')
@@ -32,6 +47,9 @@ def load_user(uid):
 # Define back-end file storage
 DepotManager.configure('default', {'depot.storage_path': '/tmp/depot/'})
 app.wsgi_app = DepotManager.make_middleware(app.wsgi_app)
+
+if app.config['PREFIX']:
+    app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix=app.config['PREFIX'])
 
 from server.models import Trigger, Story, TriggerWarning
 from server import views
