@@ -51,8 +51,9 @@ app.wsgi_app = DepotManager.make_middleware(app.wsgi_app)
 try:
     if app.config['PREFIX']:
         app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix=app.config['PREFIX'])
+        prefix = app.config['PREFIX']
 except KeyError:
-    pass
+    prefix = ''
 
 from server.models import Trigger, Story, TriggerWarning
 from server import views

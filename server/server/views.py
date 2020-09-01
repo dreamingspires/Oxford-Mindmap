@@ -3,7 +3,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import check_password_hash, generate_password_hash
 import json
 
-from server import app, db
+from server import app, db, prefix
 from server.models import User, Story
 from server.forms import LoginForm
 
@@ -24,7 +24,7 @@ def admin_login():
             #if not is_safe_url(next):
             #    return abort(400)
             #return redirect(next or url_for('profile.landing_page'))
-            return redirect('/admin')
+            return redirect(prefix + '/admin')
 
         pass
 
@@ -33,7 +33,7 @@ def admin_login():
 @app.route('/admin_logout')
 def admin_logout():
     logout_user()
-    return redirect('/admin')
+    return redirect(prefix + '/admin')
 
 from server.models import User
 
