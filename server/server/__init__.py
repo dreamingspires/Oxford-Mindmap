@@ -15,6 +15,7 @@ from server.extensions.forms import validate_image
 # Initialise Flask app
 app = Flask(__name__)
 app.config.from_object('config')
+app.config.from_object('secret_config')
 
 # Register extensions with app
 login_manager = LoginManager(app)
