@@ -9,5 +9,3 @@ DATABASE_CONNECT_OPTIONS = {}
 
 # Turn off flask-sqlalchemy track modifications (pre-deprecation)
 SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-GENERATE_TEST_DB = True
