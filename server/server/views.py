@@ -50,6 +50,10 @@ def get_stories():
         permitted_keys = ['title', 'author', 'description', 'text', 'latitude',
             'longitude', 'trigger_warnings']
         d2 = {k: v for k,v in d.items() if k in permitted_keys}
+        if 'latitude' in d and d['latitude'] is not None:
+            d2['latitude'] = float(d['latitude'])
+        if 'longitude' in d and d['longitude'] is not None:
+            d2['longitude'] = float(d['longitude'])
         if 'display_image' in d and d['display_image'] is not None:
             d2['display_image'] = d['display_image'].url
             d2['thumbnail'] = d['display_image'].thumb_url

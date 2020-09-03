@@ -85,6 +85,7 @@ class StoryView(BaseView):
         for datum in TriggerWarning}
     form_extra_fields = trigger_fields.copy()
     form_extra_fields['display_image2'] = FileField('Display Image', [validate_image])
+    form_excluded_columns = ('trigger_warnings',)
 
     def on_form_prefill(self, form, id):
         story = Story.query.filter_by(id=id).first()
