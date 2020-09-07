@@ -8,19 +8,19 @@ import { ActivityIndicator, FlatList } from 'react-native';
 
 export const StoryListItem = (props) => {
 
-    const item = props.story
+    const story = props.story
 
     return (
         <ListItem
             bottomDivider
-            onPress={() => { props.onPress(item) }}>
+            onPress={() => { props.onPress(story) }}>
             <Avatar
                 // rounded
-                source={{ uri: item.url + item.thumbnail }}
+                source={{ uri: story.url + story.thumbnail }}
                 renderPlaceholderContent={<Icon name='image' />} />
             <ListItem.Content>
-                <ListItem.Title>{item.title}</ListItem.Title>
-                <ListItem.Subtitle>{item.description}</ListItem.Subtitle>
+                <ListItem.Title>{story.title}</ListItem.Title>
+                <ListItem.Subtitle>{story.description}</ListItem.Subtitle>
             </ListItem.Content>
             <ListItem.Chevron />
         </ListItem>

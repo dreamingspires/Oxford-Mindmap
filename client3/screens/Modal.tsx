@@ -7,7 +7,9 @@ import { StoryListItem } from '../components/StoryListItem'
 import { ControlsContext } from '../contexts'
 
 export const ModalScreen = (props) => {
+
     const { story } = props.route.params
+
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
             <Card>

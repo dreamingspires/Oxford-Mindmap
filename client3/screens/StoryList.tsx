@@ -35,7 +35,7 @@ export const StoryListScreen = (props) => {
 
     return (
         <FlatList
-            data={storyData.filter(x => unlockedSet.has(x.id) || true)}
+            data={storyData.filter(x => unlockedSet.has(x.id))}
             keyExtractor={({ id }) => id}
             renderItem={({ item, index }) =>
                 <StoryListItem

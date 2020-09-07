@@ -39,13 +39,15 @@ export default function App() {
     const controlContext = {
         refresh: () => setFetchNeeded(true),
         lock: (x) => {
+            console.log('Locking ' + x);
             unlockedSet.delete(x);
             setUnlockedSet(unlockedSet);
         },
-        unlock: (x) => setUnlockedSet(unlockedSet.add(x))
+        unlock: (x) => { console.log('Unlocking ' + x); setUnlockedSet(new Set(unlockedSet).add(x)) }
     }
 
     useEffect(() => {
+        // dev hack for clearing cache on every restart
         // AsyncStorage.multiRemove(['stories', 'unlockedSet'], (err) => {})
     })
 
@@ -109,10 +111,12 @@ export default function App() {
     return (
         <ThemeProvider theme={theme} useDark={colorScheme === 'dark'}>
             <StoriesContext.Provider value={storyContext}>
-                <NavigationContainer>
-                    <StatusBar style="auto" hidden={false} />
-                    <RootNavigator />
-                </NavigationContainer>
+                <ControlsContext.Provider value={controlContext}>
+                    <NavigationContainer>
+                        <StatusBar style="auto" hidden={false} />
+                        <RootNavigator />
+                    </NavigationContainer>
+                </ControlsContext.Provider>
             </StoriesContext.Provider>
         </ThemeProvider>
     );
