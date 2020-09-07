@@ -9,7 +9,12 @@ export enum StoryFetchStatus {
 
 export const StoriesContext = React.createContext({
     storyData: [],
+    unlockedSet: new Set(),
     fetchStatus: StoryFetchStatus.Uninitialized,
-    refresh: () => {}
 });
 
+export const ControlsContext = React.createContext({
+    refresh: () => {},
+    lock: (x) => {},
+    unlock: (x) => {},
+});

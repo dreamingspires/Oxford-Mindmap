@@ -1,9 +1,10 @@
 import React from 'react';
-import { Text, Button, View, ActivityIndicator } from 'react-native'
+import { Text, Button, View, ScrollView, ActivityIndicator } from 'react-native'
 
 import { Card, Icon } from 'react-native-elements'
 
 import { StoryListItem } from '../components/StoryListItem'
+import { ControlsContext } from '../contexts'
 
 export const ModalScreen = (props) => {
     const { story } = props.route.params
@@ -13,11 +14,13 @@ export const ModalScreen = (props) => {
                 <Card.Image
                     source={{ uri: story.url + story.display_image }}
                     resizeMode={'cover'}
-                    PlaceholderContent={<ActivityIndicator size='large'/>} />
+                    PlaceholderContent={<ActivityIndicator size='large' />} />
                 <Card.Title>{story.title}</Card.Title>
-                <Text>{story.description}</Text>
-                <Card.Divider />
-                <Text>{story.text}</Text>
+                <ScrollView>
+                    <Text>{story.description}</Text>
+                    <Card.Divider />
+                    <Text>{story.text}</Text>
+                </ScrollView>
             </Card>
         </View>
     );
