@@ -1,14 +1,14 @@
-import React from 'react';
-import { Text, Button, View, ScrollView, ActivityIndicator } from 'react-native'
+import React, { useEffect, useState, useContext } from 'react';
+import { View, ScrollView, ActivityIndicator } from 'react-native'
 
-import { Card, Icon } from 'react-native-elements'
+import { Button, Text, Card, Icon } from 'react-native-elements'
 
 import { StoryListItem } from '../components/StoryListItem'
 import { ControlsContext } from '../contexts'
 
 export const ModalScreen = (props) => {
 
-    const { story } = props.route.params
+    const { story } = props.route?.params
 
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -17,10 +17,8 @@ export const ModalScreen = (props) => {
                     source={{ uri: story.url + story.display_image }}
                     resizeMode={'cover'}
                     PlaceholderContent={<ActivityIndicator size='large' />} />
-                <Card.Title>{story.title}</Card.Title>
+                <Card.Divider />
                 <ScrollView>
-                    <Text>{story.description}</Text>
-                    <Card.Divider />
                     <Text>{story.text}</Text>
                 </ScrollView>
             </Card>

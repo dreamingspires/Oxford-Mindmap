@@ -17,4 +17,5 @@ export const ControlsContext = React.createContext({
     refresh: () => {},
     lock: (x) => {},
     unlock: (x) => {},
+    clearUnlocks: () => {},
 });

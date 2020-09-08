@@ -1,5 +1,6 @@
 import React from 'react';
-import { Text, Button, View } from 'react-native'
+import { View } from 'react-native'
+import { Text, Button } from 'react-native-elements'
 
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -11,6 +12,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { MapScreen } from './screens/Map'
 import { StoryListScreen } from './screens/StoryList'
 import { ModalScreen } from './screens/Modal'
+import { SettingsScreen } from './screens/Settings'
 
 
 const screens = {
@@ -20,33 +22,33 @@ const screens = {
     },
     StoryList: {
         screen: StoryListScreen,
-        label: 'Explore Stories'
+        label: 'Unlocked Stories'
     },
 }
 
-const Drawer = createDrawerNavigator();
-const DrawerNavigator = () => {
-    return (
-        <Drawer.Navigator
-            drawerType="front">
-            {Object.entries(screens).map(function([k, v]) {
-                return (
-                    <Drawer.Screen
-                        name={k}
-                        key={k}
-                        component={v.screen}
-                        options={{ drawerLabel: v.label }}
-                    />
-                )
-            })}
-        </Drawer.Navigator>
-    )
-}
+// const Drawer = createDrawerNavigator();
+// const DrawerNavigator = () => {
+//     return (
+//         <Drawer.Navigator
+//             drawerType="front">
+//             {Object.entries(screens).map(function([k, v]) {
+//                 return (
+//                     <Drawer.Screen
+//                         name={k}
+//                         key={k}
+//                         component={v.screen}
+//                         options={{ drawerLabel: v.label }}
+//                     />
+//                 )
+//             })}
+//         </Drawer.Navigator>
+//     )
+// }
 
 const Tab = createBottomTabNavigator();
 const TabNavigator = () => {
     return (
-        <Tab.Navigator>
+        <Tab.Navigator backBehavior='initialRoute'>
             {Object.entries(screens).map(function([k, v]) {
                 return (
                     <Tab.Screen
@@ -68,10 +70,25 @@ export const RootNavigator = () => {
             initialRouteName="Tabs"
             mode="card"
             headerMode="screen">
-            <Stack.Screen name="Tabs" component={TabNavigator} options={{
-                headerShown: true
-            }} />
-            <Stack.Screen name="Modal" component={ModalScreen} />
+            <Stack.Screen name="Tabs" component={TabNavigator}
+                options={({ navigation }) => ({
+                    title: "Oxford MindMap",
+                    headerRight: () => (
+                        <Button
+                            icon={{
+                                name: "settings",
+                                // color: "black"
+                            }}
+                            type='clear'
+                            onPress={() => navigation.navigate("Settings")}
+                        />
+                    )
+                })} />
+            <Stack.Screen name="Modal" component={ModalScreen}
+                options={({ route }) => ({
+                    title: route.params?.story?.title || "No Title",
+                })} />
+            <Stack.Screen name="Settings" component={SettingsScreen} />
         </ Stack.Navigator>
     )
 }

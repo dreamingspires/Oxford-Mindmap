@@ -1,7 +1,8 @@
 import React, { useEffect, useState, useContext } from 'react';
 
 import { StyleSheet } from 'react-native';
-import { ActivityIndicator, FlatList, Text, View, Button } from 'react-native';
+import { ActivityIndicator, FlatList, View } from 'react-native';
+import { Text, Button } from 'react-native-elements'
 
 import { ControlsContext, StoriesContext, StoryFetchStatus } from '../contexts'
 import { StoryListItem } from '../components/StoryListItem'
@@ -10,11 +11,10 @@ import { StoryListItem } from '../components/StoryListItem'
 export const StoryListScreen = (props) => {
 
     const { storyData, unlockedSet, fetchStatus } = useContext(StoriesContext)
+
     console.log(storyData.length)
     console.log(unlockedSet)
     console.log(fetchStatus)
-
-
 
     const { refresh, lock, unlock } = useContext(ControlsContext)
 

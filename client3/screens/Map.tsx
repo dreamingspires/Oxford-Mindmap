@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { Text, Button, View } from 'react-native'
+import { View } from 'react-native'
 import { StyleSheet } from 'react-native';
+
+import { useFocusEffect } from '@react-navigation/native';
+import { BackHandler } from 'react-native'
 
 import { ControlsContext, StoriesContext, StoryFetchStatus } from '../contexts'
 
@@ -16,6 +19,7 @@ export const MapScreen = (props) => {
     const [currentStory, setCurrentStory] = useState(null)
     const isSelected = (id) => { return currentStory !== null && id == currentStory.id }
 
+    // construct a float for a story
     const makeFloat = (story) => {
         if (story === null) return null;
         else if (unlockedSet.has(story.id)) {
@@ -35,6 +39,8 @@ export const MapScreen = (props) => {
             )
         }
     }
+
+    // colour of markers depending on story state
     const computeColor = (id) => {
         if (isSelected(id)) {
             return unlockedSet.has(id) ? 'aqua' : 'indigo'
@@ -42,8 +48,28 @@ export const MapScreen = (props) => {
         else return unlockedSet.has(id) ? 'green' : 'tomato'
     }
 
-    console.log('Rendering MapView')
+    // make back button close the float if it's open
+    useFocusEffect(
+        React.useCallback(() => {
+            const onBackPress = () => {
+                if (currentStory == null) {
+                    return false;
+                }
+                else {
+                    setCurrentStory(null);
+                    return true;
+                }
+            };
 
+            BackHandler.addEventListener('hardwareBackPress', onBackPress);
+
+            return () => {
+                BackHandler.removeEventListener('hardwareBackPress', onBackPress);
+            }
+        }, [currentStory])
+        // not sure why it's necessary to re-register on currentStory change
+        // behaves as if currentStory was passed by value?
+    );
 
     return (
         <View style={{ flex: 1 }}>
@@ -56,10 +82,8 @@ export const MapScreen = (props) => {
                 {storyData.map((story) => <Marker
                     // https://github.com/react-native-community/react-native-maps/issues/1611
                     // workaround for marker update issue
-                    // the selected story changes key on every re-render and once more
-                    // after being deselected
-                    // WARNING very fragile, don't touch without care
-                    key={ isSelected(story.id) ? Math.random() : story.id }
+                    // it works because colour is the only property that changes
+                    key={story.id + computeColor(story.id)}
                     // tracksViewChanges={true}
                     coordinate={{ latitude: story.latitude, longitude: story.longitude }}
                     opacity={0.75}

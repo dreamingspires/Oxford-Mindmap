@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { AsyncStorage } from 'react-native';
 
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { useColorScheme } from 'react-native-appearance';
 import { ThemeProvider } from 'react-native-elements'
@@ -11,6 +11,8 @@ import { ControlsContext, StoriesContext, StoryFetchStatus } from './contexts'
 
 import { NavigationContainer } from '@react-navigation/native';
 import { RootNavigator } from './routes'
+
+import SafeAreaView from 'react-native-safe-area-view';
 
 import Constants from "expo-constants"
 
@@ -43,7 +45,8 @@ export default function App() {
             unlockedSet.delete(x);
             setUnlockedSet(unlockedSet);
         },
-        unlock: (x) => { console.log('Unlocking ' + x); setUnlockedSet(new Set(unlockedSet).add(x)) }
+        unlock: (x) => { console.log('Unlocking ' + x); setUnlockedSet(new Set(unlockedSet).add(x)) },
+        clearUnlocks: () => { console.log('Clearing all unlocks'); setUnlockedSet(new Set()) }
     }
 
     useEffect(() => {
@@ -109,16 +112,18 @@ export default function App() {
     console.log(colorScheme)
 
     return (
-        <ThemeProvider theme={theme} useDark={colorScheme === 'dark'}>
-            <StoriesContext.Provider value={storyContext}>
-                <ControlsContext.Provider value={controlContext}>
-                    <NavigationContainer>
-                        <StatusBar style="auto" hidden={false} />
-                        <RootNavigator />
-                    </NavigationContainer>
-                </ControlsContext.Provider>
-            </StoriesContext.Provider>
-        </ThemeProvider>
+        <SafeAreaView style={{ flex: 1 }}>
+            <ThemeProvider theme={theme} useDark={colorScheme === 'dark'}>
+                <StoriesContext.Provider value={storyContext}>
+                    <ControlsContext.Provider value={controlContext}>
+                        <NavigationContainer>
+                            <StatusBar style="auto" hidden={false} />
+                            <RootNavigator />
+                        </NavigationContainer>
+                    </ControlsContext.Provider>
+                </StoriesContext.Provider>
+            </ThemeProvider>
+        </SafeAreaView>
     );
 }
 
