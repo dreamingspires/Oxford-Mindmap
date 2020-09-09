@@ -14,7 +14,15 @@ export const StoriesContext = React.createContext({
     fetchStatus: StoryFetchStatus.Uninitialized,
 });
 
+export const LocationContext = React.createContext({
+    location: null,
+    awaitingLocation: false,
+    distance: (x) => { return Infinity; },
+    distanceAdjusted: (x) => { return Infinity; }
+});
+
 export const ControlsContext = React.createContext({
+    requestLocation: () => { },
     refresh: () => { },
     lock: (x) => { },
     unlock: (x) => { },

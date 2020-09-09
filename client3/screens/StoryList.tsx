@@ -42,8 +42,8 @@ export const StoryListScreen = (props) => {
                     story={item}
                     onPress={(story) => props.navigation.navigate("Modal", { story })} />
             }
-            onRefresh={refresh}
-            refreshing={fetchStatus === StoryFetchStatus.InProgress}
+            // onRefresh={refresh}
+            // refreshing={fetchStatus === StoryFetchStatus.InProgress}
             ListHeaderComponent={statusMessage}
             ListEmptyComponent={emptyMessage}
         />

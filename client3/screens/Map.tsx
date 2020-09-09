@@ -5,43 +5,49 @@ import { StyleSheet } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { BackHandler } from 'react-native'
 
-import { ControlsContext, StoriesContext, StoryFetchStatus } from '../contexts'
+import { ControlsContext, LocationContext, StoriesContext, StoryFetchStatus } from '../contexts'
 
 import MapView from 'react-native-maps';
 import { Marker, Callout } from 'react-native-maps'
 import { StoryFloat } from '../components/StoryFloat'
+import { Button } from 'react-native-elements'
 
 export const MapScreen = (props) => {
 
     const { storyData, unlockedSet } = useContext(StoriesContext)
-    const { refresh, lock, unlock } = useContext(ControlsContext)
+    const { location, awaitingLocation, distanceAdjusted } = useContext(LocationContext)
+    const { refresh, lock, unlock, requestLocation } = useContext(ControlsContext)
 
     const [currentStory, setCurrentStory] = useState(null)
     const isSelected = (id) => { return currentStory !== null && id == currentStory.id }
 
+    const makeLocationError = () => {
+        console.log(location)
+        if (location !== null) return null;
+        else {
+            return (
+                <Button
+                    title='Could not access location, press to try again.'
+                    onPress={requestLocation}
+                    type='solid'
+                    style={{ flex: 1, justifyContent: 'flex-end' }}
+                    loading={awaitingLocation}
+                />
+            )
+        }
+    }
+
     // construct a float for a story
     const makeFloat = (story) => {
         if (story === null) return null;
-        else if (unlockedSet.has(story.id)) {
+        else
             return (
                 <StoryFloat
                     story={story}
-                    buttonTitle={"View"}
-                    onButtonPress={(story) => props.navigation.navigate("Modal", { story })}
-                    type='solid'
+                    view={() => props.navigation.navigate("Modal", { story })}
+                    unlock={() => unlock(story.id)}
                 />
             )
-        }
-        else {
-            return (
-                <StoryFloat
-                    story={story}
-                    buttonTitle={"Unlock"}
-                    onButtonPress={(story) => unlock(story.id)}
-                    type='clear'
-                />
-            )
-        }
     }
 
     // colour of markers depending on story state
@@ -80,7 +86,7 @@ export const MapScreen = (props) => {
             <MapView
                 style={styles.map}
                 initialRegion={oxfordRegion}
-                // showsUserLocation={true}
+                showsUserLocation={true}
                 onPress={() => setCurrentStory(null)}
             >
                 {storyData.map((story) => <Marker
@@ -98,7 +104,10 @@ export const MapScreen = (props) => {
                 />
                 )}
             </MapView>
-            {makeFloat(currentStory)}
+            <View style={{ flex: 1 }}>
+                {makeLocationError()}
+                {makeFloat(currentStory)}
+            </View>
         </View>
     );
 }

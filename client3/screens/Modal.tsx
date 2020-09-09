@@ -45,6 +45,7 @@ export const ModalScreen = (props) => {
                 <ScrollView>
                     <Text>{story.text}</Text>
                 </ScrollView>
+                <Card.Divider />
                 {makeButton(story)}
             </Card>
         </View>
