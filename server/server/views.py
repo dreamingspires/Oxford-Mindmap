@@ -55,8 +55,8 @@ def get_stories():
         if 'longitude' in d and d['longitude'] is not None:
             d2['longitude'] = float(d['longitude'])
         if 'display_image' in d and d['display_image'] is not None:
-            d2['display_image'] = d['display_image'].url
-            d2['thumbnail'] = d['display_image'].thumb_url
+            d2['display_image'] = prefix + d['display_image'].url
+            d2['thumbnail'] = prefix + d['display_image'].thumb_url
         else:
             d2['display_image'] = None
             d2['thumbnail'] = None
