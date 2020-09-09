@@ -67,10 +67,9 @@ export default function App() {
                 {
                     accuracy: Location.Accuracy.High,
                     timeInterval: 1000,
-                    // distanceInterval: 5
+                    distanceInterval: 1
                 },
                 (location) => {
-                    console.log("Location updated")
                     setLocation(location);
                 });
             console.log('Subscribed to location service');
@@ -79,7 +78,7 @@ export default function App() {
 
         let subscription = requestPermission()
             .then(registerLocation)
-            .catch(() => { console.log('Failed to get location permisson'); return { remove: () => { console.log('Running dummy unsubscribe') } } })
+            .catch(() => { console.log('Failed to get location permisson'); return { remove: () => { } } })
             .finally(() => setLocationRequestNeeded(false))
 
         return () => {
@@ -99,8 +98,6 @@ export default function App() {
             .then((vals) => {
                 const s = JSON.parse(vals[0][1] || '{}')
                 const u = JSON.parse(vals[1][1] || '[]')
-                // console.log(s)
-                // console.log(u)
 
                 const newStoryData = { ...s, ...storyData }
                 const newUnlockedSet = unlockedSet.union(u)

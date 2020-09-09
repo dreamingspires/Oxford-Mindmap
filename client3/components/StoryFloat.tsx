@@ -38,8 +38,11 @@ export const StoryFloat = (props) => {
         }
     }
 
+    // https://github.com/facebook/react-native/issues/12360
+    // iOS press propagation works differently to Android
+    // pointerEvents="box-none" resolves the issue
     return (
-        <View style={{ flex: 1, justifyContent: 'space-between' }}>
+        <View pointerEvents="box-none" style={{ flex: 1, justifyContent: 'space-between' }}>
             <Card containerStyle={{ opacity: 0.8, marginTop: 15 }}>
                 <Card.Image
                     onPress={props.unlock}

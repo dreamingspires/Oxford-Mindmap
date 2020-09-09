@@ -11,11 +11,6 @@ import { StoryListItem } from '../components/StoryListItem'
 export const StoryListScreen = (props) => {
 
     const { storyData, unlockedSet, fetchStatus } = useContext(StoriesContext)
-
-    // console.log(storyData.length)
-    // console.log(unlockedSet)
-    // console.log(fetchStatus)
-
     const { refresh, lock, unlock } = useContext(ControlsContext)
 
     const text = storyData.length == 0
@@ -42,8 +37,6 @@ export const StoryListScreen = (props) => {
                     story={item}
                     onPress={(story) => props.navigation.navigate("Modal", { story })} />
             }
-            // onRefresh={refresh}
-            // refreshing={fetchStatus === StoryFetchStatus.InProgress}
             ListHeaderComponent={statusMessage}
             ListEmptyComponent={emptyMessage}
         />

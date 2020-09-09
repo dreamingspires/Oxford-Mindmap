@@ -8,7 +8,7 @@ import { BackHandler } from 'react-native'
 import { ControlsContext, LocationContext, StoriesContext, StoryFetchStatus } from '../contexts'
 
 import MapView from 'react-native-maps';
-import { Marker, Callout } from 'react-native-maps'
+import { Marker, Callout, UrlTile } from 'react-native-maps'
 import { StoryFloat } from '../components/StoryFloat'
 import { Button } from 'react-native-elements'
 
@@ -22,7 +22,6 @@ export const MapScreen = (props) => {
     const isSelected = (id) => { return currentStory !== null && id == currentStory.id }
 
     const makeLocationError = () => {
-        console.log(location)
         if (location !== null) return null;
         else {
             return (
@@ -83,34 +82,39 @@ export const MapScreen = (props) => {
 
     return (
         <View style={{ flex: 1 }}>
-            <MapView
-                style={styles.map}
-                initialRegion={oxfordRegion}
-                showsUserLocation={true}
-                onPress={() => setCurrentStory(null)}
-            >
-                {storyData.map((story) => <Marker
-                    // https://github.com/react-native-community/react-native-maps/issues/1611
-                    // workaround for marker update issue
-                    // it works because colour is the only property that changes
-                    key={story.id + computeColor(story.id)}
-                    // tracksViewChanges={true}
-                    coordinate={{ latitude: story.latitude, longitude: story.longitude }}
-                    opacity={0.75}
-                    pinColor={computeColor(story.id)}
-                    onPress={() => {
-                        setCurrentStory(story);
-                    }}
-                />
-                )}
-            </MapView>
+            {makeLocationError()}
             <View style={{ flex: 1 }}>
-                {makeLocationError()}
+                <MapView
+                    style={styles.map}
+                    initialRegion={oxfordRegion}
+                    showsUserLocation={true}
+                    onPress={() => setCurrentStory(null)}
+                >
+                    {storyData.map((story) => <Marker
+                        // https://github.com/react-native-community/react-native-maps/issues/1611
+                        // workaround for marker update issue
+                        // it works because colour is the only property that changes
+                        key={story.id + computeColor(story.id)}
+                        coordinate={{ latitude: story.latitude, longitude: story.longitude }}
+                        opacity={0.75}
+                        pinColor={computeColor(story.id)}
+                        onPress={() => {
+                            setCurrentStory(story);
+                        }}
+                        stopPropagation={true}
+                    />
+                    )}
+                </MapView>
                 {makeFloat(currentStory)}
             </View>
         </View>
     );
 }
+                    // <UrlTile
+                    //     urlTemplate={'http://c.tile.openstreetmap.org/{z}/{x}/{y}.png'}
+                    //     maximumZ={19}
+                    //     flipY={false}
+                    // />
 
 const oxfordRegion = {
     latitude: 51.7519,
