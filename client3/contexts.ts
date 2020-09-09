@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Set } from 'immutable'
 
 export enum StoryFetchStatus {
     Uninitialized = 'uninitialized',
@@ -9,13 +10,13 @@ export enum StoryFetchStatus {
 
 export const StoriesContext = React.createContext({
     storyData: [],
-    unlockedSet: new Set(),
+    unlockedSet: Set(),
     fetchStatus: StoryFetchStatus.Uninitialized,
 });
 
 export const ControlsContext = React.createContext({
-    refresh: () => {},
-    lock: (x) => {},
-    unlock: (x) => {},
-    clearUnlocks: () => {},
+    refresh: () => { },
+    lock: (x) => { },
+    unlock: (x) => { },
+    clearUnlocks: () => { },
 });

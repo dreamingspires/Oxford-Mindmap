@@ -12,9 +12,9 @@ export const StoryListScreen = (props) => {
 
     const { storyData, unlockedSet, fetchStatus } = useContext(StoriesContext)
 
-    console.log(storyData.length)
-    console.log(unlockedSet)
-    console.log(fetchStatus)
+    // console.log(storyData.length)
+    // console.log(unlockedSet)
+    // console.log(fetchStatus)
 
     const { refresh, lock, unlock } = useContext(ControlsContext)
 

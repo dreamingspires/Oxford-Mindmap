@@ -4,11 +4,35 @@ import { View, ScrollView, ActivityIndicator } from 'react-native'
 import { Button, Text, Card, Icon } from 'react-native-elements'
 
 import { StoryListItem } from '../components/StoryListItem'
-import { ControlsContext } from '../contexts'
+import { ControlsContext, StoriesContext } from '../contexts'
 
 export const ModalScreen = (props) => {
 
     const { story } = props.route?.params
+
+    const { unlockedSet } = useContext(StoriesContext)
+    const { lock, unlock } = useContext(ControlsContext)
+
+    const makeButton = (story) => {
+        if (unlockedSet.has(story.id)) {
+            return (
+                <Button
+                    title='Lock'
+                    onPress={() => { lock(story.id) }}
+                    type='clear'
+                />
+            )
+        }
+        else {
+            return (
+                <Button
+                    title='Undo'
+                    onPress={() => { unlock(story.id) }}
+                    type='solid'
+                />
+            )
+        }
+    }
 
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -21,6 +45,7 @@ export const ModalScreen = (props) => {
                 <ScrollView>
                     <Text>{story.text}</Text>
                 </ScrollView>
+                {makeButton(story)}
             </Card>
         </View>
     );

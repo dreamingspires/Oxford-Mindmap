@@ -14,6 +14,8 @@ import { RootNavigator } from './routes'
 
 import SafeAreaView from 'react-native-safe-area-view';
 
+import { Set } from 'immutable'
+
 import Constants from "expo-constants"
 
 let apiUrl = Constants.manifest.extra.api_url
@@ -29,7 +31,7 @@ export default function App() {
     const [fetchStatus, setFetchStatus] = useState(StoryFetchStatus.InProgress);
     const [fetchNeeded, setFetchNeeded] = useState(true);
     const [storyData, setStoryData] = useState({});
-    const [unlockedSet, setUnlockedSet] = useState(new Set());
+    const [unlockedSet, setUnlockedSet] = useState(Set());
     const [cacheReady, setCacheReady] = useState(false);
 
     const storyContext = {
@@ -40,13 +42,9 @@ export default function App() {
 
     const controlContext = {
         refresh: () => setFetchNeeded(true),
-        lock: (x) => {
-            console.log('Locking ' + x);
-            unlockedSet.delete(x);
-            setUnlockedSet(unlockedSet);
-        },
-        unlock: (x) => { console.log('Unlocking ' + x); setUnlockedSet(new Set(unlockedSet).add(x)) },
-        clearUnlocks: () => { console.log('Clearing all unlocks'); setUnlockedSet(new Set()) }
+        lock: (x) => { console.log('Locking ' + x); setUnlockedSet(unlockedSet.delete(x)); },
+        unlock: (x) => { console.log('Unlocking ' + x); setUnlockedSet(unlockedSet.add(x)) },
+        clearUnlocks: () => { console.log('Clearing all unlocks'); setUnlockedSet(unlockedSet.clear()) }
     }
 
     useEffect(() => {
@@ -64,7 +62,7 @@ export default function App() {
                 // console.log(u)
 
                 const newStoryData = { ...s, ...storyData }
-                const newUnlockedSet = new Set([...u, ...unlockedSet])
+                const newUnlockedSet = unlockedSet.union(u)
 
                 setStoryData(newStoryData);
                 setUnlockedSet(newUnlockedSet);
@@ -102,7 +100,7 @@ export default function App() {
     useEffect(() => {
         if (cacheReady) {
             console.log('Storing local unlocked set')
-            AsyncStorage.setItem("unlockedSet", JSON.stringify(Array.from(unlockedSet)))
+            AsyncStorage.setItem("unlockedSet", JSON.stringify(unlockedSet.toArray()))
                 .catch((error) => console.log(error))
         }
     }, [unlockedSet, cacheReady])

@@ -27,7 +27,9 @@ export const MapScreen = (props) => {
                 <StoryFloat
                     story={story}
                     buttonTitle={"View"}
-                    onButtonPress={(story) => props.navigation.navigate("Modal", { story })} />
+                    onButtonPress={(story) => props.navigation.navigate("Modal", { story })}
+                    type='solid'
+                />
             )
         }
         else {
@@ -35,7 +37,9 @@ export const MapScreen = (props) => {
                 <StoryFloat
                     story={story}
                     buttonTitle={"Unlock"}
-                    onButtonPress={(story) => unlock(story.id)} />
+                    onButtonPress={(story) => unlock(story.id)}
+                    type='clear'
+                />
             )
         }
     }

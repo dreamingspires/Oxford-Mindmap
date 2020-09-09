@@ -19,7 +19,7 @@ export const StoryFloat = (props) => {
             <Button
                 title={props.buttonTitle}
                 onPress={() => { props.onButtonPress(story) }}
-                type='clear'
+                type={props.type}
             />
         </Card>
     );
