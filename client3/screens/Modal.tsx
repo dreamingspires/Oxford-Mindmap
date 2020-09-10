@@ -4,6 +4,7 @@ import { View, ScrollView, ActivityIndicator } from 'react-native'
 import { Button, Text, Card, Icon } from 'react-native-elements'
 
 import { StoryListItem } from '../components/StoryListItem'
+import { AuthorText, TWText } from '../components/StoryElements'
 import { ControlsContext, StoriesContext } from '../contexts'
 
 export const ModalScreen = (props) => {
@@ -40,7 +41,7 @@ export const ModalScreen = (props) => {
         else return (
             <Card.Image
                 source={{ uri: uri }}
-                style={{ height: 300, margin: 15 }}
+                style={{ height: 200, margin: 15 }}
                 resizeMode={'contain'}
                 PlaceholderContent={<ActivityIndicator size='large' />}
             />
@@ -49,12 +50,22 @@ export const ModalScreen = (props) => {
 
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Card containerStyle={{ marginBottom: 10, margin: 10, paddingLeft: 15, paddingRight: 1 }}>
+            <Card containerStyle={{ marginBottom: 10, margin: 10, paddingBottom: 10, paddingLeft: 15, paddingRight: 1 }}>
                 <ScrollView style={{ marginBottom: 10, paddingRight: 14 }}>
                     {makeImageCard(story)}
-                    <Text>{story.text}</Text>
+                    <Card.FeaturedSubtitle>
+                        <AuthorText story={story} />
+                    </Card.FeaturedSubtitle>
+                    <Card.FeaturedSubtitle>
+                        <TWText story={story} style={{ color: 'red' }} />
+                    </Card.FeaturedSubtitle>
+                    <Card.Divider />
+                    <Text onPress={() => console.log(story)}
+                    >{story.text}</Text>
                 </ScrollView>
-                {makeButton(story)}
+                <View style={{ paddingRight: 14 }}>
+                    {makeButton(story)}
+                </View>
             </Card>
         </View>
     );

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { View, ScrollView, ActivityIndicator } from 'react-native'
 
 import { Card, Icon, Image, Text, Button } from 'react-native-elements'
+import { TWText } from '../components/StoryElements'
 
 import { ControlsContext, LocationContext, StoriesContext, StoryFetchStatus } from '../contexts'
 
@@ -67,8 +68,11 @@ export const StoryFloat = (props) => {
                 <Card.Title
                     onPress={props.unlock}    // dev hack
                 >{story.title}</Card.Title>
-                <Text>{story.description}</Text>
-                <Card.Divider />
+                <Card.FeaturedSubtitle>
+                    <Text>{story.description}</Text>
+                </Card.FeaturedSubtitle>
+                <Card.Divider style={{marginBottom: 10}}/>
+                <TWText story={story} style={{marginBottom: 10}} />
                 {makeButton(story)}
             </Card>
             {makeImageCard(story)}

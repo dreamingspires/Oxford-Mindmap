@@ -17,7 +17,7 @@ export const StoryListItem = (props) => {
             <Avatar
                 // rounded
                 source={{ uri: getUrl(story.thumbnail) }}
-            renderPlaceholderContent={<Icon name='image' />}
+                renderPlaceholderContent={<Icon name='image' />}
             />
             <ListItem.Content>
                 <ListItem.Title>{story.title}</ListItem.Title>
