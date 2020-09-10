@@ -3,12 +3,12 @@ import { StyleSheet } from 'react-native';
 import { ListItem, Avatar, Icon } from 'react-native-elements'
 
 import { ActivityIndicator, FlatList } from 'react-native';
-
-// function
+import { StoriesContext } from '../contexts'
 
 export const StoryListItem = (props) => {
 
     const story = props.story
+    const { getUrl } = useContext(StoriesContext)
 
     return (
         <ListItem
@@ -16,8 +16,9 @@ export const StoryListItem = (props) => {
             onPress={() => { props.onPress(story) }}>
             <Avatar
                 // rounded
-                source={{ uri: story.url + story.thumbnail }}
-                renderPlaceholderContent={<Icon name='image' />} />
+                source={{ uri: getUrl(story.thumbnail) }}
+            renderPlaceholderContent={<Icon name='image' />}
+            />
             <ListItem.Content>
                 <ListItem.Title>{story.title}</ListItem.Title>
                 <ListItem.Subtitle>{story.description}</ListItem.Subtitle>

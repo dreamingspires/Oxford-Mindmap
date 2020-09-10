@@ -10,7 +10,7 @@ export const ModalScreen = (props) => {
 
     const { story } = props.route?.params
 
-    const { unlockedSet } = useContext(StoriesContext)
+    const { unlockedSet, getUrl } = useContext(StoriesContext)
     const { lock, unlock } = useContext(ControlsContext)
 
     const makeButton = (story) => {
@@ -34,18 +34,26 @@ export const ModalScreen = (props) => {
         }
     }
 
+    const makeImageCard = (story) => {
+        const uri = getUrl(story.display_image);
+        if (uri === 'noimage') return null;
+        else return (
+            <Card.Image
+                source={{ uri: uri }}
+                style={{ height: 300, margin: 15 }}
+                resizeMode={'contain'}
+                PlaceholderContent={<ActivityIndicator size='large' />}
+            />
+        )
+    }
+
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Card>
-                <Card.Image
-                    source={{ uri: story.url + story.display_image }}
-                    resizeMode={'cover'}
-                    PlaceholderContent={<ActivityIndicator size='large' />} />
-                <Card.Divider />
-                <ScrollView>
+            <Card containerStyle={{ marginBottom: 10, margin: 10, paddingLeft: 15, paddingRight: 1 }}>
+                <ScrollView style={{ marginBottom: 10, paddingRight: 14 }}>
+                    {makeImageCard(story)}
                     <Text>{story.text}</Text>
                 </ScrollView>
-                <Card.Divider />
                 {makeButton(story)}
             </Card>
         </View>

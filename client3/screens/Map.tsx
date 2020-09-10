@@ -22,6 +22,10 @@ export const MapScreen = (props) => {
     const isSelected = (id) => { return currentStory !== null && id == currentStory.id }
 
     const makeLocationError = () => {
+        // this is a check against null, not truthiness, because location
+        // is undefined before the first location permisson rejection,
+        // and null afterwards
+        // other part of the massive kludge scheme
         if (location !== null) return null;
         else {
             return (

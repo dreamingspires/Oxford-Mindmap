@@ -21,7 +21,7 @@ import Constants from "expo-constants"
 let apiUrl = Constants.manifest.extra.api_url
 
 function reformatData(json: Object): Object[] {
-    return Object.entries(json).map(function([k, v]) { return { ...v, id: k, url: apiUrl } })
+    return Object.entries(json).map(function([k, v]) { return { ...v, id: k } })
 }
 
 // in metres
@@ -39,7 +39,10 @@ export default function App() {
 
     const [cacheReady, setCacheReady] = useState(false);
 
-    const [location, setLocation] = useState(null);
+    // using undefined here instead of null is a massive kludge
+    // only null triggers the location error, and will only be set after at least
+    // one failed attempt to get permission
+    const [location, setLocation] = useState(undefined);
     const [locationRequestNeeded, setLocationRequestNeeded] = useState(true);
     const [dummyFlipper, setDummyFlipper] = useState(true);
 
@@ -54,6 +57,8 @@ export default function App() {
         const requestPermission = async () => {
             let { status } = await Location.requestPermissionsAsync();
             if (status !== 'granted') {
+                // first time will change it from undefined to null
+                setLocation(null);
                 console.log('Permission to access location was denied');
             }
             else {
@@ -115,7 +120,7 @@ export default function App() {
             console.log('Fetching from ' + apiUrl)
             setFetchNeeded(false)
             setFetchStatus(StoryFetchStatus.InProgress);
-            fetch(apiUrl + '/api/get_stories')
+            fetch(apiUrl + '/oxford-mindmap/api/get_stories')
                 .then((response) => response.json())
                 .then((json) => setStoryData(Object.assign(storyData, json)))
                 .then(() => setFetchStatus(StoryFetchStatus.Done))
@@ -146,11 +151,12 @@ export default function App() {
     const storyContext = {
         storyData: reformatData(storyData),
         unlockedSet: unlockedSet,
+        getUrl: (suffix) => { return suffix ? apiUrl + suffix : 'noimage'; },
         fetchStatus: fetchStatus,
     }
 
     const computeDistance = (story) => {
-        if (location === null) { return Infinity; }
+        if (!location) { return Infinity; }
         else {
             const from = { latitude: location.coords.latitude, longitude: location.coords.longitude };
             const to = { latitude: story.latitude, longitude: story.longitude };

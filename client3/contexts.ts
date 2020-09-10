@@ -11,6 +11,7 @@ export enum StoryFetchStatus {
 export const StoriesContext = React.createContext({
     storyData: [],
     unlockedSet: Set(),
+    getUrl: (x) => null,
     fetchStatus: StoryFetchStatus.Uninitialized,
 });
 
