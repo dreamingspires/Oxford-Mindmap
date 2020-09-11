@@ -15,7 +15,7 @@ export const StoryListItem = (props) => {
             bottomDivider
             onPress={() => { props.onPress(story) }}>
             <Avatar
-                // rounded
+                rounded
                 source={{ uri: getUrl(story.thumbnail) }}
                 renderPlaceholderContent={<Icon name='image' />}
             />

@@ -71,8 +71,8 @@ export const StoryFloat = (props) => {
                 <Card.FeaturedSubtitle>
                     <Text>{story.description}</Text>
                 </Card.FeaturedSubtitle>
-                <Card.Divider style={{marginBottom: 10}}/>
-                <TWText story={story} style={{marginBottom: 10}} />
+                <Card.Divider style={{ marginBottom: 10 }} />
+                <TWText story={story} style={{ marginBottom: 10, color: 'red' }} />
                 {makeButton(story)}
             </Card>
             {makeImageCard(story)}

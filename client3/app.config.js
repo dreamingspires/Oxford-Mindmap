@@ -1,7 +1,7 @@
 
 export default {
-    ios: {
-      bundleIdentifier: "com.aith.oxford-mindmap"
+    android: {
+      package: "com.aith.oxford_mindmap"
     },
     extra: {
       api_url: "https://dev.dreamingspires.dev"

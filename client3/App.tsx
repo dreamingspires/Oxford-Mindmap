@@ -16,16 +16,8 @@ import { Set } from 'immutable'
 import { AsyncStorage } from 'react-native';
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib'
-import Constants from "expo-constants"
 
-let apiUrl = Constants.manifest.extra.api_url
-
-function reformatData(json: Object): Object[] {
-    return Object.entries(json).map(function([k, v]) { return { ...v, id: k } })
-}
-
-// in metres
-const storyRadius = 10;
+import { reformatStoryData, apiUrl, storyRadius } from './constants'
 
 const theme = {};
 
@@ -33,11 +25,11 @@ export default function App() {
 
     const [fetchStatus, setFetchStatus] = useState(StoryFetchStatus.InProgress);
     const [fetchNeeded, setFetchNeeded] = useState(true);
-    const [storyData, setStoryData] = useState({});
+    const [rawStoryData, setRawStoryData] = useState({});
+    const [storyData, setStoryData] = useState([]);
 
     const [unlockedSet, setUnlockedSet] = useState(Set());
-
-    const [cacheReady, setCacheReady] = useState(false);
+    const [unlockedReady, setUnlockedReady] = useState(false);
 
     // using undefined here instead of null is a massive kludge
     // only null triggers the location error, and will only be set after at least
@@ -46,6 +38,8 @@ export default function App() {
     const [locationRequestNeeded, setLocationRequestNeeded] = useState(true);
     const [dummyFlipper, setDummyFlipper] = useState(true);
 
+
+    // location
     useEffect(() => {
         if (locationRequestNeeded) {
             setDummyFlipper(!dummyFlipper);
@@ -92,64 +86,103 @@ export default function App() {
         }
     }, [dummyFlipper]);
 
+
+
+
+
     useEffect(() => {
         // dev hack for clearing cache on every restart
         // AsyncStorage.multiRemove(['stories', 'unlockedSet'], (err) => {})
     })
 
-    // fetch all data from local storage
+
+
+
+    // unlocked stories
+    // fetch unlocked from local storage
     useEffect(() => {
-        AsyncStorage.multiGet(['stories', 'unlockedSet'])
-            .then((vals) => {
-                const s = JSON.parse(vals[0][1] || '{}')
-                const u = JSON.parse(vals[1][1] || '[]')
-
-                const newStoryData = { ...s, ...storyData }
-                const newUnlockedSet = unlockedSet.union(u)
-
-                setStoryData(newStoryData);
-                setUnlockedSet(newUnlockedSet);
+        AsyncStorage.getItem('unlockedSet')
+            .then((val) => {
+                setUnlockedSet(unlockedSet.union(JSON.parse(val || '[]')));
             })
-            .then(() => setCacheReady(true))
+            .then(() => setUnlockedReady(true))
             .catch((error) => console.log(error))
     }, [])
 
-    // fetch stories from the internet
+    // store unlocked to local storage
     useEffect(() => {
-        if (fetchNeeded) {
-            console.log('Fetching from ' + apiUrl)
-            setFetchNeeded(false)
-            setFetchStatus(StoryFetchStatus.InProgress);
-            fetch(apiUrl + '/oxford-mindmap/api/get_stories')
-                .then((response) => response.json())
-                .then((json) => setStoryData(Object.assign(storyData, json)))
-                .then(() => setFetchStatus(StoryFetchStatus.Done))
-                .catch((error) => { setFetchStatus(StoryFetchStatus.Failed); })
-        }
-    }, [fetchNeeded]);
-
-    // store stories and unlocked in local storage
-    // stories
-    useEffect(() => {
-        if (cacheReady) {
-            console.log('Storing local stories')
-            AsyncStorage.setItem("stories", JSON.stringify(storyData))
-                .catch((error) => console.log(error))
-        }
-    }, [storyData, cacheReady])
-
-    // unlocked
-    useEffect(() => {
-        if (cacheReady) {
+        if (unlockedReady) {
             console.log('Storing local unlocked set')
             AsyncStorage.setItem("unlockedSet", JSON.stringify(unlockedSet.toArray()))
                 .catch((error) => console.log(error))
         }
-    }, [unlockedSet, cacheReady])
+    }, [unlockedSet, unlockedReady])
+
+
+    // stories
+    // fetch stories from the internet and local storage as backup
+    useEffect(() => {
+        if (fetchNeeded) {
+
+            const fetchRemote = (async () => {
+                console.log('Fetching from ' + apiUrl)
+                setFetchStatus(StoryFetchStatus.InProgress);
+                try {
+                    const stories = await fetch(apiUrl + '/oxford-mindmap/api/get_stories')
+                        .then((response) => response.json())
+                    await new Promise(r => setTimeout(r, 5000));
+                    console.log("Remote stories: ", Object.keys(stories).length)
+                    setFetchStatus(StoryFetchStatus.Done);
+                    return stories;
+                }
+                catch (error) {
+                    console.log('Failed to fetch from internet')
+                    setFetchStatus(StoryFetchStatus.Failed);
+                    throw error;
+                }
+            })();
+
+            const fetchLocal = (async () => {
+                try {
+                    const stories = await AsyncStorage.getItem('stories')
+                        .then((val) => JSON.parse(val || '{}'))
+                    await new Promise(r => setTimeout(r, 2000));
+                    console.log("Local stories: ", Object.keys(stories).length)
+                    return stories;
+                }
+                catch (error) {
+                    return {};
+                }
+            })();
+
+            // Promise.any not implemented yet it seems
+            // const backupStories = Promise.any([fetchRemote(), fetchLocal()]);
+
+            // either fetchRemote if that is somehow faster, or fetchLocal
+            const storiesInitial = Promise.race([fetchRemote, fetchLocal])
+                .catch(() => fetchLocal);
+
+            storiesInitial
+                .then(stories => setRawStoryData(stories))
+                .then(() => fetchRemote)
+                .then(stories => {
+                    setRawStoryData(stories);
+                    console.log('Storing freshly fetched stories');
+                    AsyncStorage.setItem('stories', JSON.stringify(stories))
+                        .catch((error) => console.log(error));
+                })
+                .finally(() => setFetchNeeded(false))
+        }
+    }, [fetchNeeded]);
+
+    useEffect(() => {
+        setStoryData(reformatStoryData(rawStoryData));
+    }, [rawStoryData])
+
 
 
     const storyContext = {
-        storyData: reformatData(storyData),
+        storyData: storyData,
         unlockedSet: unlockedSet,
         getUrl: (suffix) => { return suffix ? apiUrl + suffix : 'noimage'; },
         fetchStatus: fetchStatus,
@@ -178,6 +211,7 @@ export default function App() {
         unlock: (x) => { console.log('Unlocking ' + x); setUnlockedSet(unlockedSet.add(x)) },
         clearUnlocks: () => { console.log('Clearing all unlocks'); setUnlockedSet(unlockedSet.clear()) }
     }
+
 
     // const colorScheme = useColorScheme();
     const colorScheme = 'light'

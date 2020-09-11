@@ -12,6 +12,8 @@ import { Marker, Callout, UrlTile } from 'react-native-maps'
 import { StoryFloat } from '../components/StoryFloat'
 import { Button } from 'react-native-elements'
 
+import { oxfordRegion } from '../constants'
+
 export const MapScreen = (props) => {
 
     const { storyData, unlockedSet } = useContext(StoriesContext)
@@ -119,13 +121,6 @@ export const MapScreen = (props) => {
                     //     maximumZ={19}
                     //     flipY={false}
                     // />
-
-const oxfordRegion = {
-    latitude: 51.7519,
-    longitude: -1.2583,
-    latitudeDelta: 0.05,
-    longitudeDelta: 0.05,
-}
 
 const styles = StyleSheet.create({
     map: {
