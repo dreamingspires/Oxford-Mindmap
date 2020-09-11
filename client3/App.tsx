@@ -11,13 +11,19 @@ import { RootNavigator } from './routes'
 
 import SafeAreaView from 'react-native-safe-area-view';
 
-import { ControlsContext, LocationContext, StoriesContext, StoryFetchStatus } from './contexts'
+import {
+    StoriesContext,
+    StoryFetchStatus,
+    ControlsContext,
+    LocationContext,
+    TriggerContext,
+} from './contexts'
 import { Set } from 'immutable'
 import { AsyncStorage } from 'react-native';
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib'
 
-import { reformatStoryData, apiUrl, storyRadius } from './constants'
+import { reformatStoryData, apiUrl, storyRadius, extractTWs } from './constants'
 
 const theme = {};
 
@@ -30,6 +36,10 @@ export default function App() {
 
     const [unlockedSet, setUnlockedSet] = useState(Set());
     const [unlockedReady, setUnlockedReady] = useState(false);
+
+    const [knownTriggers, setKnownTriggers] = useState(new Map())
+    const [blacklistSet, setBlacklistSet] = useState(Set());
+    const [blacklistReady, setBlacklistReady] = useState(false);
 
     // using undefined here instead of null is a massive kludge
     // only null triggers the location error, and will only be set after at least
@@ -112,12 +122,31 @@ export default function App() {
     // store unlocked to local storage
     useEffect(() => {
         if (unlockedReady) {
-            console.log('Storing local unlocked set')
+            console.log('Storing unlocked set')
             AsyncStorage.setItem("unlockedSet", JSON.stringify(unlockedSet.toArray()))
                 .catch((error) => console.log(error))
         }
     }, [unlockedSet, unlockedReady])
 
+    // triggers
+    // fetch blacklist from local storage
+    useEffect(() => {
+        AsyncStorage.getItem('blacklist')
+            .then((val) => {
+                setBlacklistSet(blacklistSet.union(JSON.parse(val || '[]')));
+            })
+            .then(() => setBlacklistReady(true))
+            .catch((error) => console.log(error))
+    }, [])
+
+    // store blacklist to local storage
+    useEffect(() => {
+        if (unlockedReady) {
+            console.log('Storing trigger blacklist')
+            AsyncStorage.setItem("blacklist", JSON.stringify(blacklistSet.toArray()))
+                .catch((error) => console.log(error))
+        }
+    }, [blacklistSet, blacklistReady])
 
     // stories
     // fetch stories from the internet and local storage as backup
@@ -176,17 +205,12 @@ export default function App() {
     }, [fetchNeeded]);
 
     useEffect(() => {
-        setStoryData(reformatStoryData(rawStoryData));
+        const stories = reformatStoryData(rawStoryData)
+        setStoryData(stories);
+        setKnownTriggers(extractTWs(stories));
     }, [rawStoryData])
 
 
-
-    const storyContext = {
-        storyData: storyData,
-        unlockedSet: unlockedSet,
-        getUrl: (suffix) => { return suffix ? apiUrl + suffix : 'noimage'; },
-        fetchStatus: fetchStatus,
-    }
 
     const computeDistance = (story) => {
         if (!location) { return Infinity; }
@@ -212,7 +236,29 @@ export default function App() {
         clearUnlocks: () => { console.log('Clearing all unlocks'); setUnlockedSet(unlockedSet.clear()) }
     }
 
+    const filterByTriggers = (stories) =>
+        stories.filter(x => !x.trigger_warnings
+            .some(({ name }) => blacklistSet.has(name)))
 
+    const triggerContext = {
+        knownTriggers: knownTriggers,
+        blacklist: blacklistSet,
+        toggle: (t) => {
+            if (blacklistSet.has(t)) {
+                setBlacklistSet(blacklistSet.delete(t))
+            }
+            else {
+                setBlacklistSet(blacklistSet.add(t))
+            }
+        }
+    }
+
+    const storyContext = {
+        storyData: filterByTriggers(storyData),
+        unlockedSet: unlockedSet,
+        getUrl: (suffix) => { return suffix ? apiUrl + suffix : 'noimage'; },
+        fetchStatus: fetchStatus,
+    }
     // const colorScheme = useColorScheme();
     const colorScheme = 'light'
 
@@ -225,10 +271,12 @@ export default function App() {
                 <StoriesContext.Provider value={storyContext}>
                     <LocationContext.Provider value={locationContext}>
                         <ControlsContext.Provider value={controlContext}>
-                            <NavigationContainer>
-                                <StatusBar style="auto" hidden={false} />
-                                <RootNavigator />
-                            </NavigationContainer>
+                            <TriggerContext.Provider value={triggerContext}>
+                                <NavigationContainer>
+                                    <StatusBar style="auto" hidden={false} />
+                                    <RootNavigator />
+                                </NavigationContainer>
+                            </TriggerContext.Provider >
                         </ControlsContext.Provider>
                     </LocationContext.Provider>
                 </StoriesContext.Provider>

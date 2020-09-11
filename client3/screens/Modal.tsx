@@ -54,7 +54,7 @@ export const ModalScreen = (props) => {
             ...StyleSheet.absoluteFillObject,
             justifyContent: 'center',
             alignItems: 'center',
-            marginBottom: 10, marginTop: 10,
+            marginBottom: 15, marginTop: 15,
             paddingBottom: 10, paddingLeft: 15, paddingRight: 1
         }}>
             <ScrollView contentContainerStyle={{ paddingRight: 14 }}>

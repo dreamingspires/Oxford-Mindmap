@@ -35,7 +35,8 @@ export const MapScreen = (props) => {
                     title='Could not access location, press to try again.'
                     onPress={requestLocation}
                     type='solid'
-                    style={{ flex: 1, justifyContent: 'flex-end' }}
+                    // apparently 0 is not small enough
+                    buttonStyle={{ borderRadius: -1 }}
                     loading={awaitingLocation}
                 />
             )

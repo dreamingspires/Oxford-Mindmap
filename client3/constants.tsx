@@ -35,3 +35,9 @@ export const reformatStoryData = (json: Object): Object[] => {
     console.log('Reformatting raw story data')
     return Object.entries(json).map(([k, v]) => sanitizeStory({ ...v, id: k }))
 }
+
+export const extractTWs = (stories) => {
+    let tws = new Map();
+    stories.forEach(x => x.trigger_warnings.forEach(({name, value}) => tws.set(name, value)));
+    return tws;
+}

@@ -1,6 +1,6 @@
 import React from 'react';
-import { View } from 'react-native'
-import { Text, Button } from 'react-native-elements'
+import { View, TouchableOpacity } from 'react-native'
+import { Text, Button, Icon } from 'react-native-elements'
 
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -74,11 +74,22 @@ export const RootNavigator = () => {
                 options={({ navigation }) => ({
                     title: "Oxford MindMap",
                     headerRight: () => (
+                        // <TouchableOpacity
+                        //     onPress={() => navigation.navigate("Settings")}
+                        // >
+                        //     <View style={{ justifyContent: 'center', alignContent: 'center', paddingRight: 15 }}>
+                        //         <Icon
+                        //             // size={30}
+                        //             name="settings"
+                        //         />
+                        //     </View>
+                        // </TouchableOpacity>
                         <Button
                             icon={{
                                 name: "settings",
                                 // color: "black"
                             }}
+                            TouchableComponent={TouchableOpacity}
                             type='clear'
                             onPress={() => navigation.navigate("Settings")}
                         />

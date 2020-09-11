@@ -15,6 +15,12 @@ export const StoriesContext = React.createContext({
     fetchStatus: StoryFetchStatus.Uninitialized,
 });
 
+export const TriggerContext = React.createContext({
+    knownTriggers: new Map(),
+    blacklist: Set(),
+    toggle: (t) => {},
+});
+
 export const LocationContext = React.createContext({
     location: null,
     awaitingLocation: false,
