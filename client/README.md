@@ -9,7 +9,7 @@ You will need the Expo CLI tool, which is annoying to install non-globally. A go
 ```bash
 npm install -g expo-cli
 
-cd client3/
+cd client/
 npm install
 npm start
 ```
