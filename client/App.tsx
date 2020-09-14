@@ -159,7 +159,7 @@ export default function App() {
                 try {
                     const stories = await fetch(apiUrl + '/oxford-mindmap/api/get_stories')
                         .then((response) => response.json())
-                    await new Promise(r => setTimeout(r, 5000));
+                    // await new Promise(r => setTimeout(r, 5000));
                     console.log("Remote stories: ", Object.keys(stories).length)
                     setFetchStatus(StoryFetchStatus.Done);
                     return stories;
@@ -175,7 +175,7 @@ export default function App() {
                 try {
                     const stories = await AsyncStorage.getItem('stories')
                         .then((val) => JSON.parse(val || '{}'))
-                    await new Promise(r => setTimeout(r, 2000));
+                    // await new Promise(r => setTimeout(r, 2000));
                     console.log("Local stories: ", Object.keys(stories).length)
                     return stories;
                 }
