@@ -81,7 +81,7 @@ class UserView(BaseView):
 class StoryView(BaseView):
     column_exclude_list = ['display_image']
     trigger_fields = {datum.name: BooleanField(datum.value, 
-            render_kw={'style': 'width:0'}) \
+            render_kw={'style': 'width:2%'}) \
         for datum in TriggerWarning}
     form_extra_fields = trigger_fields.copy()
     form_extra_fields['display_image2'] = FileField('Display Image', [validate_image])
