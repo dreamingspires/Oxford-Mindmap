@@ -30,6 +30,8 @@ export const SettingsScreen = (props) => {
                         <ListItem.Content>
                             <ListItem.Title>Refresh Stories</ListItem.Title>
                         </ListItem.Content>
+                        {fetchStatus === StoryFetchStatus.Failed
+                            ? <ListItem.Subtitle>Failed</ListItem.Subtitle> : null}
                         {fetchStatus === StoryFetchStatus.InProgress ? <ActivityIndicator /> : null}
                     </ListItem>
                     <ListItem
@@ -52,23 +54,23 @@ export const SettingsScreen = (props) => {
                     </ListItem>
                 </Card>
                 <Card containerStyle={{ marginBottom: 15 }}>
-                        <Card.Title>Trigger Filter</Card.Title>
-                        {Array.from(knownTriggers.entries()).sort().map(([k, v], index) =>
-                            <ListItem
-                                key={k}
-                                topDivider={index !== 0}
-                            >
-                                <ListItem.Content>
-                                    <ListItem.Title>{v}</ListItem.Title>
-                                </ListItem.Content>
-                                <ListItem.CheckBox
-                                    checked={!blacklist.has(k)}
-                                    onPress={() => toggle(k)}
-                                />
-                            </ListItem>
-                        )}
-                        {knownTriggers.size === 0 ? emptyMessage : null}
-                    </Card>
+                    <Card.Title>Trigger Filter</Card.Title>
+                    {Array.from(knownTriggers.entries()).sort().map(([k, v], index) =>
+                        <ListItem
+                            key={k}
+                            topDivider={index !== 0}
+                        >
+                            <ListItem.Content>
+                                <ListItem.Title>{v}</ListItem.Title>
+                            </ListItem.Content>
+                            <ListItem.CheckBox
+                                checked={!blacklist.has(k)}
+                                onPress={() => toggle(k)}
+                            />
+                        </ListItem>
+                    )}
+                    {knownTriggers.size === 0 ? emptyMessage : null}
+                </Card>
             </ScrollView>
         </View >
     );
