@@ -92,6 +92,7 @@ export const MapScreen = (props) => {
             {makeLocationError()}
             <View style={{ flex: 1 }}>
                 <MapView
+                    provider="google"
                     style={styles.map}
                     initialRegion={oxfordRegion}
                     showsUserLocation={true}
