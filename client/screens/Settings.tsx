@@ -14,6 +14,11 @@ export const SettingsScreen = (props) => {
     const { refresh, clearUnlocks } = useContext(ControlsContext)
     const { knownTriggers, blacklist, toggle } = useContext(TriggerContext)
 
+    const emptyMessage =
+        <View style={{ flex: 1, margin: 5, alignItems: 'center', justifyContent: 'center' }}>
+            <Text style={{ fontSize: 15 }}>No loaded stories have any trigger warnings.</Text>
+        </View>
+
     return (
         <View style={{ flex: 1 }}>
             <ScrollView>
@@ -25,18 +30,22 @@ export const SettingsScreen = (props) => {
                         <ListItem.Content>
                             <ListItem.Title>Refresh Stories</ListItem.Title>
                         </ListItem.Content>
+                        {fetchStatus === StoryFetchStatus.Failed
+                            ? <ListItem.Subtitle>Failed</ListItem.Subtitle> : null}
                         {fetchStatus === StoryFetchStatus.InProgress ? <ActivityIndicator /> : null}
                     </ListItem>
                     <ListItem
                         // bottomDivider
                         onPress={
-                            () => Alert.alert("Are you sure?", "This will lock all stories ever unlocked.",
-                            [{
-                                text: "Cancel"
-                            }, {
-                                text: "Reset Progress",
-                                onPress: clearUnlocks
-                            }], { cancelable: true })
+                            () => Alert.alert(
+                                "Are you sure?",
+                                "This will lock all stories ever unlocked.",
+                                [{
+                                    text: "Cancel"
+                                }, {
+                                    text: "Reset Progress",
+                                    onPress: clearUnlocks
+                                }], { cancelable: true })
                         }
                     >
                         <ListItem.Content>
@@ -46,7 +55,7 @@ export const SettingsScreen = (props) => {
                 </Card>
                 <Card containerStyle={{ marginBottom: 15 }}>
                     <Card.Title>Trigger Filter</Card.Title>
-                    {Array.from(knownTriggers.entries()).map(([k, v], index) =>
+                    {Array.from(knownTriggers.entries()).sort().map(([k, v], index) =>
                         <ListItem
                             key={k}
                             topDivider={index !== 0}
@@ -60,6 +69,7 @@ export const SettingsScreen = (props) => {
                             />
                         </ListItem>
                     )}
+                    {knownTriggers.size === 0 ? emptyMessage : null}
                 </Card>
             </ScrollView>
         </View >

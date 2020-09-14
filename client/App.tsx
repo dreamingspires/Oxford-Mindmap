@@ -200,6 +200,7 @@ export default function App() {
                     AsyncStorage.setItem('stories', JSON.stringify(stories))
                         .catch((error) => console.log(error));
                 })
+                .catch((error) => console.log(error))
                 .finally(() => setFetchNeeded(false))
         }
     }, [fetchNeeded]);

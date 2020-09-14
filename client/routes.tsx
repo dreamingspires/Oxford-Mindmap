@@ -18,11 +18,13 @@ import { SettingsScreen } from './screens/Settings'
 const screens = {
     Map: {
         screen: MapScreen,
-        label: 'Explore Map'
+        label: 'Explore Map',
+        icon: () => <Icon name="map" />
     },
     StoryList: {
         screen: StoryListScreen,
-        label: 'Unlocked Stories'
+        label: 'Unlocked Stories',
+        icon: () => <Icon name="list" />
     },
 }
 
@@ -55,7 +57,7 @@ const TabNavigator = () => {
                         name={k}
                         key={k}
                         component={v.screen}
-                        options={{ tabBarLabel: v.label }}
+                        options={{ tabBarLabel: v.label, tabBarIcon: v.icon }}
                     />
                 )
             })}

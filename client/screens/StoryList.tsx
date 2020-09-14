@@ -13,16 +13,6 @@ export const StoryListScreen = (props) => {
     const { storyData, unlockedSet, fetchStatus } = useContext(StoriesContext)
     const { refresh, lock, unlock } = useContext(ControlsContext)
 
-    const text = storyData.length == 0
-        ? "Failed to fetch stories."
-        : "Failed to refresh stories."
-    const statusMessage = fetchStatus === StoryFetchStatus.Failed
-        ?
-        <View style={{ flex: 1, margin: 5, alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ fontSize: 15 }}>{text}</Text>
-        </View>
-        : null;
-
     const emptyMessage =
         <View style={{ flex: 1, margin: 5, alignItems: 'center', justifyContent: 'center' }}>
             <Text style={{ fontSize: 15 }}>No stories to display.</Text>
@@ -37,7 +27,6 @@ export const StoryListScreen = (props) => {
                     story={item}
                     onPress={(story) => props.navigation.navigate("Modal", { story })} />
             }
-            ListHeaderComponent={statusMessage}
             ListEmptyComponent={emptyMessage}
         />
     );
