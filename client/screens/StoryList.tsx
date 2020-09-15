@@ -10,7 +10,7 @@ import { StoryListItem } from '../components/StoryListItem'
 
 export const StoryListScreen = (props) => {
 
-    const { storyData, unlockedSet, fetchStatus } = useContext(StoriesContext)
+    const { storyData, unlockedSet, fetchStatus, auxiliaryMap } = useContext(StoriesContext)
     const { refresh, lock, unlock } = useContext(ControlsContext)
 
     const emptyMessage =
@@ -20,7 +20,10 @@ export const StoryListScreen = (props) => {
 
     return (
         <FlatList
-            data={storyData.filter(x => unlockedSet.has(x.id))}
+            data={storyData.filter(x => unlockedSet.has(x.id)).sort((a, b) => {
+                return -(auxiliaryMap.get(a.id).unlockTime
+                       - auxiliaryMap.get(b.id).unlockTime);
+            })}
             keyExtractor={({ id }) => id}
             renderItem={({ item, index }) =>
                 <StoryListItem

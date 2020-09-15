@@ -18,7 +18,7 @@ import {
     LocationContext,
     TriggerContext,
 } from './contexts'
-import { Set } from 'immutable'
+import { Set as ISet, Map as IMap } from 'immutable'
 import { AsyncStorage } from 'react-native';
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib'
@@ -34,11 +34,14 @@ export default function App() {
     const [rawStoryData, setRawStoryData] = useState({});
     const [storyData, setStoryData] = useState([]);
 
-    const [unlockedSet, setUnlockedSet] = useState(Set());
+    const [unlockedSet, setUnlockedSet] = useState(ISet());
     const [unlockedReady, setUnlockedReady] = useState(false);
 
+    const [auxiliaryMap, setAuxiliaryMap] = useState(IMap());
+    const [auxiliaryReady, setAuxiliaryReady] = useState(false);
+
     const [knownTriggers, setKnownTriggers] = useState(new Map())
-    const [blacklistSet, setBlacklistSet] = useState(Set());
+    const [blacklistSet, setBlacklistSet] = useState(ISet());
     const [blacklistReady, setBlacklistReady] = useState(false);
 
     // using undefined here instead of null is a massive kludge
@@ -106,6 +109,26 @@ export default function App() {
     })
 
 
+
+    // auxiliary
+    // fetch auxiliary from local storage
+    useEffect(() => {
+        AsyncStorage.getItem('auxiliaryMap')
+            .then((val) => {
+                setAuxiliaryMap(auxiliaryMap.merge(JSON.parse(val || '[]')));
+            })
+            .then(() => setAuxiliaryReady(true))
+            .catch((error) => console.log(error))
+    }, [])
+
+    // store auxiliary to local storage
+    useEffect(() => {
+        if (auxiliaryReady) {
+            console.log('Storing auxiliary map')
+            AsyncStorage.setItem('auxiliaryMap', JSON.stringify(auxiliaryMap.toArray()))
+                .catch((error) => console.log(error))
+        }
+    }, [auxiliaryMap, auxiliaryReady])
 
 
     // unlocked stories
@@ -205,6 +228,7 @@ export default function App() {
         }
     }, [fetchNeeded]);
 
+    // process story data when raw data changes
     useEffect(() => {
         const stories = reformatStoryData(rawStoryData)
         setStoryData(stories);
@@ -232,8 +256,16 @@ export default function App() {
     const controlContext = {
         requestLocation: () => setLocationRequestNeeded(true),
         refresh: () => setFetchNeeded(true),
-        lock: (x) => { console.log('Locking ' + x); setUnlockedSet(unlockedSet.delete(x)); },
-        unlock: (x) => { console.log('Unlocking ' + x); setUnlockedSet(unlockedSet.add(x)) },
+        lock: (x) => {
+            console.log('Locking ' + x);
+            setUnlockedSet(unlockedSet.delete(x));
+        },
+        unlock: (x) => {
+            console.log('Unlocking ' + x);
+            setAuxiliaryMap(auxiliaryMap.update(x, {},
+                (v) => { return { ...v, unlockTime: Date.now() } }));
+            setUnlockedSet(unlockedSet.add(x))
+        },
         clearUnlocks: () => { console.log('Clearing all unlocks'); setUnlockedSet(unlockedSet.clear()) }
     }
 
@@ -257,6 +289,7 @@ export default function App() {
     const storyContext = {
         storyData: filterByTriggers(storyData),
         unlockedSet: unlockedSet,
+        auxiliaryMap: auxiliaryMap,
         getUrl: (suffix) => { return suffix ? apiUrl + suffix : 'noimage'; },
         fetchStatus: fetchStatus,
     }
