@@ -4,7 +4,11 @@ import { StyleSheet } from 'react-native';
 import { Alert } from 'react-native'
 import { Text, Tooltip } from 'react-native-elements'
 
+export const isAuthorTextEmpty = (story) => !story.author
+
 export const AuthorText = (props) => {
+
+    // if (isAuthorTextEmpty(props.story)) return null;
 
     const text = `Author: ${props.story.author ? props.story.author : "Anonymous"}`
 
@@ -13,9 +17,11 @@ export const AuthorText = (props) => {
     )
 };
 
+export const isTWTextEmpty = (story) => story.trigger_warnings.length == 0
+
 export const TWText = (props) => {
 
-    if (props.story.trigger_warnings.length == 0) return null;
+    if (isTWTextEmpty(props.story)) return null;
 
     const text = "TW: " + props.story.trigger_warnings.map(x => x.value).join(', ')
     // <Text>You can filter out specific triggers in the settings.</Text>

@@ -5,7 +5,7 @@ import { StyleSheet } from 'react-native';
 import { Button, Text, Card, Icon } from 'react-native-elements'
 
 import { StoryListItem } from '../components/StoryListItem'
-import { AuthorText, TWText } from '../components/StoryElements'
+import { AuthorText, TWText, isAuthorTextEmpty, isTWTextEmpty } from '../components/StoryElements'
 import { ControlsContext, StoriesContext } from '../contexts'
 
 export const ModalScreen = (props) => {
@@ -36,17 +36,42 @@ export const ModalScreen = (props) => {
         }
     }
 
-    const makeImageCard = (story) => {
+    const makeHeader = (story) => {
+
+        let elements = new Array();
+
         const uri = getUrl(story.display_image);
-        if (uri === 'noimage') return null;
-        else return (
-            <Card.Image
-                source={{ uri: uri }}
-                style={{ height: 200, margin: 15 }}
-                resizeMode={'contain'}
-                PlaceholderContent={<ActivityIndicator size='large' />}
-            />
-        )
+        if (uri !== 'noimage') {
+            elements.push(
+                <Card.Image
+                    key={1}
+                    source={{ uri: uri }}
+                    style={{ height: 200, margin: 15 }}
+                    resizeMode={'contain'}
+                    PlaceholderContent={<ActivityIndicator size='large' />}
+                />
+            );
+        }
+
+        if (!isAuthorTextEmpty(story)) {
+            elements.push(
+                <Card.FeaturedSubtitle key={2}>
+                    <AuthorText story={story} />
+                </Card.FeaturedSubtitle>);
+        }
+
+        if (!isTWTextEmpty(story)) {
+            elements.push(
+                <Card.FeaturedSubtitle key={3}>
+                    <TWText story={story} style={{ color: 'red' }} />
+                </Card.FeaturedSubtitle>);
+        }
+
+        if (elements.length > 0) {
+            elements.push(<Card.Divider key={4} />)
+        }
+
+        return elements;
     }
 
     return (
@@ -58,16 +83,10 @@ export const ModalScreen = (props) => {
             paddingBottom: 10, paddingLeft: 15, paddingRight: 1
         }}>
             <ScrollView contentContainerStyle={{ paddingRight: 14 }}>
-                {makeImageCard(story)}
-                <Card.FeaturedSubtitle>
-                    <AuthorText story={story} />
-                </Card.FeaturedSubtitle>
-                <Card.FeaturedSubtitle>
-                    <TWText story={story} style={{ color: 'red' }} />
-                </Card.FeaturedSubtitle>
-                <Card.Divider />
-                <Text onPress={() => console.log(story)}
-                >{story.text}</Text>
+                {makeHeader(story)}
+                <Text onPress={() => console.log(story)}>
+                    {story.text}
+                </Text>
             </ScrollView>
             <View style={{ marginTop: 10, paddingRight: 14 }}>
                 {makeButton(story)}
