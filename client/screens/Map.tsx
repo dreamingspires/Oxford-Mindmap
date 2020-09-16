@@ -45,7 +45,7 @@ export const MapScreen = (props) => {
 
     // construct a float for a story
     const makeFloat = (story) => {
-        if (story === null) return null;
+        if (story === null || !storyData.some((story) => story.id === currentStory.id)) return null;
         else
             return (
                 <StoryFloat
