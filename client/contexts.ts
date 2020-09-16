@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Set as ISet, Map as IMap } from 'immutable'
+import { defaultSettings } from './constants'
 
 export enum StoryFetchStatus {
     Uninitialized = 'uninitialized',
@@ -19,7 +20,7 @@ export const StoriesContext = React.createContext({
 export const TriggerContext = React.createContext({
     knownTriggers: new Map(),
     blacklist: ISet(),
-    toggle: (t) => {},
+    toggle: (t) => { },
 });
 
 export const LocationContext = React.createContext({
@@ -35,4 +36,6 @@ export const ControlsContext = React.createContext({
     lock: (x) => { },
     unlock: (x) => { },
     clearUnlocks: () => { },
+    settings: defaultSettings,
+    setSettings: (s) => { }
 });

@@ -23,7 +23,14 @@ import { AsyncStorage } from 'react-native';
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib'
 
-import { reformatStoryData, apiUrl, storyRadius, extractTWs } from './constants'
+import {
+    reformatStoryData,
+    apiUrl,
+    storyRadius,
+    extractTWs,
+    defaultSettings,
+    autoRefreshPeriod,
+} from './constants'
 
 const theme = {};
 
@@ -39,6 +46,9 @@ export default function App() {
 
     const [auxiliaryMap, setAuxiliaryMap] = useState(IMap());
     const [auxiliaryReady, setAuxiliaryReady] = useState(false);
+
+    const [settings, setSettings] = useState(defaultSettings);
+    const [settingsReady, setSettingsReady] = useState(false);
 
     const [knownTriggers, setKnownTriggers] = useState(new Map())
     const [blacklistSet, setBlacklistSet] = useState(ISet());
@@ -131,6 +141,27 @@ export default function App() {
     }, [auxiliaryMap, auxiliaryReady])
 
 
+    // settings
+    // fetch from local storage
+    useEffect(() => {
+        AsyncStorage.getItem('settings')
+            .then((val) => {
+                // loaded override previous
+                setSettings({ ...settings, ...JSON.parse(val || '{}') });
+            })
+            .then(() => setSettingsReady(true))
+            .catch((error) => console.log(error))
+    }, [])
+
+    // store to local storage
+    useEffect(() => {
+        if (settingsReady) {
+            console.log('Storing settings')
+            AsyncStorage.setItem('settings', JSON.stringify(settings))
+                .catch((error) => console.log(error))
+        }
+    }, [settings, settingsReady])
+
     // unlocked stories
     // fetch unlocked from local storage
     useEffect(() => {
@@ -180,7 +211,9 @@ export default function App() {
                 console.log('Fetching from ' + apiUrl)
                 setFetchStatus(StoryFetchStatus.InProgress);
                 try {
-                    const stories = await fetch(apiUrl + '/oxford-mindmap/api/get_stories')
+                    const stories = await fetch(
+                        apiUrl + '/oxford-mindmap/api/get_stories',
+                        { cache: 'no-cache' })
                         .then((response) => response.json())
                     await new Promise(r => setTimeout(r, 5000));
                     console.log("Remote stories: ", Object.keys(stories).length)
@@ -236,6 +269,20 @@ export default function App() {
     }, [rawStoryData])
 
 
+    // auto-refresh
+    useEffect(() => {
+        if (settings.autoRefresh) {
+            const interval = setInterval(
+                () => {
+                    console.log('Auto-refresh initiated')
+                    setFetchNeeded(true);
+                },
+                autoRefreshPeriod * 1000);
+            return () => clearInterval(interval);
+
+        }
+    }, [settings]);
+
 
     const computeDistance = (story) => {
         if (!location) { return Infinity; }
@@ -266,7 +313,9 @@ export default function App() {
                 (v) => { return { ...v, unlockTime: Date.now() } }));
             setUnlockedSet(unlockedSet.add(x))
         },
-        clearUnlocks: () => { console.log('Clearing all unlocks'); setUnlockedSet(unlockedSet.clear()) }
+        clearUnlocks: () => { console.log('Clearing all unlocks'); setUnlockedSet(unlockedSet.clear()) },
+        settings: settings,
+        setSettings: setSettings
     }
 
     const filterByTriggers = (stories) =>

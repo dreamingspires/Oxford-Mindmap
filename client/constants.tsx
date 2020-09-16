@@ -4,6 +4,13 @@ import Constants from "expo-constants"
 
 export const apiUrl = Constants.manifest.extra.api_url
 
+export const defaultSettings = {
+    autoRefresh: true,
+}
+
+// in seconds
+export const autoRefreshPeriod = 60;
+
 // in metres
 export const storyRadius = 10;
 

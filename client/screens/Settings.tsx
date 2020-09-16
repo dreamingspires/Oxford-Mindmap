@@ -11,7 +11,7 @@ import { ControlsContext, TriggerContext } from '../contexts'
 export const SettingsScreen = (props) => {
 
     const { storyData, unlockedSet, fetchStatus } = useContext(StoriesContext)
-    const { refresh, clearUnlocks } = useContext(ControlsContext)
+    const { refresh, clearUnlocks, settings, setSettings } = useContext(ControlsContext)
     const { knownTriggers, blacklist, toggle } = useContext(TriggerContext)
 
     const emptyMessage =
@@ -28,11 +28,22 @@ export const SettingsScreen = (props) => {
                         onPress={refresh}
                     >
                         <ListItem.Content>
-                            <ListItem.Title>Refresh Stories</ListItem.Title>
+                            <ListItem.Title>Refresh Stories Now</ListItem.Title>
                         </ListItem.Content>
                         {fetchStatus === StoryFetchStatus.Failed
                             ? <ListItem.Subtitle>Failed</ListItem.Subtitle> : null}
                         {fetchStatus === StoryFetchStatus.InProgress ? <ActivityIndicator /> : null}
+                    </ListItem>
+                    <ListItem
+                        bottomDivider
+                    >
+                        <ListItem.Content>
+                            <ListItem.Title>Auto Refresh Stories</ListItem.Title>
+                        </ListItem.Content>
+                        <ListItem.CheckBox
+                            checked={settings.autoRefresh}
+                            onPress={() => setSettings({ ...settings, autoRefresh: !settings.autoRefresh })}
+                        />
                     </ListItem>
                     <ListItem
                         // bottomDivider
