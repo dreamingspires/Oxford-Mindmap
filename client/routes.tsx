@@ -13,6 +13,7 @@ import { MapScreen } from './screens/Map'
 import { StoryListScreen } from './screens/StoryList'
 import { ModalScreen } from './screens/Modal'
 import { SettingsScreen } from './screens/Settings'
+import { OpenFormScreen } from './screens/OpenForm'
 
 
 const screens = {
@@ -25,6 +26,11 @@ const screens = {
         screen: StoryListScreen,
         label: 'Unlocked Stories',
         icon: () => <Icon name="list" />
+    },
+    FormButton: {
+        screen: OpenFormScreen,
+        label: 'Submit Own Story',
+        icon: () => <Icon name="send" />
     },
 }
 
