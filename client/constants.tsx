@@ -22,6 +22,8 @@ export const oxfordRegion = {
     longitudeDelta: 0.05,
 }
 
+export const getImageUrl = (suffix) => suffix ? apiUrl + suffix : 'noimage'
+
 const sanitizeStory = (story) => {
     const perturbation = () => (Math.random() - 0.5) * 0.001
     const defaults = {

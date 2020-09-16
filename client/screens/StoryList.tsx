@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useMemo } from 'react';
 
 import { StyleSheet } from 'react-native';
 import { ActivityIndicator, FlatList, View } from 'react-native';
@@ -18,18 +18,22 @@ export const StoryListScreen = (props) => {
             <Text style={{ fontSize: 15 }}>No stories to display.</Text>
         </View>
 
+    const renderItem = ({ item, index }) =>
+        <StoryListItem
+            story={item}
+            onPress={(story) => props.navigation.navigate("Modal", { story })} />
+
+    const storyList = useMemo(
+        () => storyData.filter(x => unlockedSet.has(x.id)).sort((a, b) => {
+            return -(auxiliaryMap.get(a.id).unlockTime
+                   - auxiliaryMap.get(b.id).unlockTime);
+        }), [storyData, unlockedSet]);
+
     return (
         <FlatList
-            data={storyData.filter(x => unlockedSet.has(x.id)).sort((a, b) => {
-                return -(auxiliaryMap.get(a.id).unlockTime
-                       - auxiliaryMap.get(b.id).unlockTime);
-            })}
+            data={storyList}
             keyExtractor={({ id }) => id}
-            renderItem={({ item, index }) =>
-                <StoryListItem
-                    story={item}
-                    onPress={(story) => props.navigation.navigate("Modal", { story })} />
-            }
+            renderItem={renderItem}
             ListEmptyComponent={emptyMessage}
         />
     );

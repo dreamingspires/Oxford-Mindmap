@@ -13,7 +13,6 @@ export const StoriesContext = React.createContext({
     storyData: [],
     unlockedSet: ISet(),
     auxiliaryMap: IMap(),
-    getUrl: (x) => null,
     fetchStatus: StoryFetchStatus.Uninitialized,
 });
 

@@ -7,12 +7,13 @@ import { Button, Text, Card, Icon } from 'react-native-elements'
 import { StoryListItem } from '../components/StoryListItem'
 import { AuthorText, TWText, isAuthorTextEmpty, isTWTextEmpty } from '../components/StoryElements'
 import { ControlsContext, StoriesContext } from '../contexts'
+import { getImageUrl } from '../constants'
 
 export const ModalScreen = (props) => {
 
     const { story } = props.route?.params
 
-    const { unlockedSet, getUrl } = useContext(StoriesContext)
+    const { unlockedSet } = useContext(StoriesContext)
     const { lock, unlock } = useContext(ControlsContext)
 
     const makeButton = (story) => {
@@ -40,7 +41,7 @@ export const ModalScreen = (props) => {
 
         let elements = new Array();
 
-        const uri = getUrl(story.display_image);
+        const uri = getImageUrl(story.display_image);
         if (uri !== 'noimage') {
             elements.push(
                 <Card.Image

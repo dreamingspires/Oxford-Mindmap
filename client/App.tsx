@@ -264,8 +264,13 @@ export default function App() {
     // process story data when raw data changes
     useEffect(() => {
         const stories = reformatStoryData(rawStoryData)
-        setStoryData(stories);
-        setKnownTriggers(extractTWs(stories));
+        if (JSON.stringify(stories) !== JSON.stringify(storyData)) {
+            setStoryData(stories);
+            setKnownTriggers(extractTWs(stories));
+        }
+        else {
+            console.log('Not updating storyData because new version is deeply equal')
+        }
     }, [rawStoryData])
 
 
@@ -339,7 +344,6 @@ export default function App() {
         storyData: filterByTriggers(storyData),
         unlockedSet: unlockedSet,
         auxiliaryMap: auxiliaryMap,
-        getUrl: (suffix) => { return suffix ? apiUrl + suffix : 'noimage'; },
         fetchStatus: fetchStatus,
     }
     // const colorScheme = useColorScheme();
