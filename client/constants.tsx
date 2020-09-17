@@ -1,7 +1,17 @@
 import Constants from "expo-constants"
+import { Dimensions } from 'react-native';
 
 
 console.log(Constants.manifest)
+
+
+const width = Dimensions.get('window').width;
+const height = Dimensions.get('window').height;
+
+export const window = {
+    width,
+    height,
+};
 
 export const apiUrl = Constants.manifest.extra.api_url
 export const formUrl = Constants.manifest.extra.form_url
@@ -49,6 +59,6 @@ export const reformatStoryData = (json: Object): Object[] => {
 
 export const extractTWs = (stories) => {
     let tws = new Map();
-    stories.forEach(x => x.trigger_warnings.forEach(({name, value}) => tws.set(name, value)));
+    stories.forEach(x => x.trigger_warnings.forEach(({ name, value }) => tws.set(name, value)));
     return tws;
 }

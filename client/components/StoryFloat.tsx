@@ -5,7 +5,7 @@ import { Card, Icon, Image, Text, Button } from 'react-native-elements'
 import { TWText } from '../components/StoryElements'
 
 import { ControlsContext, LocationContext, StoriesContext, StoryFetchStatus } from '../contexts'
-import { getImageUrl } from '../constants'
+import { getImageUrl, window } from '../constants'
 
 export const StoryFloat = (props) => {
 
@@ -52,7 +52,7 @@ export const StoryFloat = (props) => {
             <Card containerStyle={{ opacity: 0.8, marginTop: 15, padding: 5 }}>
                 <Card.Image
                     source={{ uri: uri }}
-                    style={{ height: 200, margin: 0 }}
+                    style={{ height: window.height/4, margin: 0 }}
                     resizeMode={'contain'}
                     PlaceholderContent={<ActivityIndicator size='large' />}
                 />
