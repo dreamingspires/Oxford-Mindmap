@@ -26,7 +26,8 @@ class TriggerWarning(Enum):
     racism = 'racism/racial slurs'
     sexism = 'sexism/misogyny'
     classism = 'classism'
-    religious_hatred = 'hateful language directed at religious groups'
+    religious_hatred = 'religious hatred'
+    stalking = 'stalking'
 
 class Base(db.Model):
     __abstract__  = True
