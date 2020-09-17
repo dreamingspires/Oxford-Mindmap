@@ -5,12 +5,13 @@ import { Card, Icon, Image, Text, Button } from 'react-native-elements'
 import { TWText } from '../components/StoryElements'
 
 import { ControlsContext, LocationContext, StoriesContext, StoryFetchStatus } from '../contexts'
+import { getImageUrl } from '../constants'
 
 export const StoryFloat = (props) => {
 
     const story = props.story
 
-    const { unlockedSet, getUrl } = useContext(StoriesContext)
+    const { unlockedSet } = useContext(StoriesContext)
     const { location, distanceAdjusted } = useContext(LocationContext)
 
     const distance = distanceAdjusted(story);
@@ -45,7 +46,7 @@ export const StoryFloat = (props) => {
     }
 
     const makeImageCard = (story) => {
-        const uri = getUrl(story.display_image);
+        const uri = getImageUrl(story.display_image);
         if (uri === 'noimage') return null;
         else return (
             <Card containerStyle={{ opacity: 0.8, marginTop: 15, padding: 5 }}>

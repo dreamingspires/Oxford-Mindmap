@@ -18,12 +18,19 @@ import {
     LocationContext,
     TriggerContext,
 } from './contexts'
-import { Set } from 'immutable'
+import { Set as ISet, Map as IMap } from 'immutable'
 import { AsyncStorage } from 'react-native';
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib'
 
-import { reformatStoryData, apiUrl, storyRadius, extractTWs } from './constants'
+import {
+    reformatStoryData,
+    apiUrl,
+    storyRadius,
+    extractTWs,
+    defaultSettings,
+    autoRefreshPeriod,
+} from './constants'
 
 const theme = {};
 
@@ -34,11 +41,17 @@ export default function App() {
     const [rawStoryData, setRawStoryData] = useState({});
     const [storyData, setStoryData] = useState([]);
 
-    const [unlockedSet, setUnlockedSet] = useState(Set());
+    const [unlockedSet, setUnlockedSet] = useState(ISet());
     const [unlockedReady, setUnlockedReady] = useState(false);
 
+    const [auxiliaryMap, setAuxiliaryMap] = useState(IMap());
+    const [auxiliaryReady, setAuxiliaryReady] = useState(false);
+
+    const [settings, setSettings] = useState(defaultSettings);
+    const [settingsReady, setSettingsReady] = useState(false);
+
     const [knownTriggers, setKnownTriggers] = useState(new Map())
-    const [blacklistSet, setBlacklistSet] = useState(Set());
+    const [blacklistSet, setBlacklistSet] = useState(ISet());
     const [blacklistReady, setBlacklistReady] = useState(false);
 
     // using undefined here instead of null is a massive kludge
@@ -107,6 +120,47 @@ export default function App() {
 
 
 
+    // auxiliary
+    // fetch auxiliary from local storage
+    useEffect(() => {
+        AsyncStorage.getItem('auxiliaryMap')
+            .then((val) => {
+                setAuxiliaryMap(auxiliaryMap.merge(JSON.parse(val || '[]')));
+            })
+            .then(() => setAuxiliaryReady(true))
+            .catch((error) => console.log(error))
+    }, [])
+
+    // store auxiliary to local storage
+    useEffect(() => {
+        if (auxiliaryReady) {
+            console.log('Storing auxiliary map')
+            AsyncStorage.setItem('auxiliaryMap', JSON.stringify(auxiliaryMap.toArray()))
+                .catch((error) => console.log(error))
+        }
+    }, [auxiliaryMap, auxiliaryReady])
+
+
+    // settings
+    // fetch from local storage
+    useEffect(() => {
+        AsyncStorage.getItem('settings')
+            .then((val) => {
+                // loaded override previous
+                setSettings({ ...settings, ...JSON.parse(val || '{}') });
+            })
+            .then(() => setSettingsReady(true))
+            .catch((error) => console.log(error))
+    }, [])
+
+    // store to local storage
+    useEffect(() => {
+        if (settingsReady) {
+            console.log('Storing settings')
+            AsyncStorage.setItem('settings', JSON.stringify(settings))
+                .catch((error) => console.log(error))
+        }
+    }, [settings, settingsReady])
 
     // unlocked stories
     // fetch unlocked from local storage
@@ -157,7 +211,9 @@ export default function App() {
                 console.log('Fetching from ' + apiUrl)
                 setFetchStatus(StoryFetchStatus.InProgress);
                 try {
-                    const stories = await fetch(apiUrl + '/oxford-mindmap/api/get_stories')
+                    const stories = await fetch(
+                        apiUrl + '/oxford-mindmap/api/get_stories',
+                        { cache: 'no-cache' })
                         .then((response) => response.json())
                     // await new Promise(r => setTimeout(r, 5000));
                     console.log("Remote stories: ", Object.keys(stories).length)
@@ -205,12 +261,32 @@ export default function App() {
         }
     }, [fetchNeeded]);
 
+    // process story data when raw data changes
     useEffect(() => {
         const stories = reformatStoryData(rawStoryData)
-        setStoryData(stories);
-        setKnownTriggers(extractTWs(stories));
+        if (JSON.stringify(stories) !== JSON.stringify(storyData)) {
+            setStoryData(stories);
+            setKnownTriggers(extractTWs(stories));
+        }
+        else {
+            console.log('Not updating storyData because new version is deeply equal')
+        }
     }, [rawStoryData])
 
+
+    // auto-refresh
+    useEffect(() => {
+        if (settings.autoRefresh) {
+            const interval = setInterval(
+                () => {
+                    console.log('Auto-refresh initiated')
+                    setFetchNeeded(true);
+                },
+                autoRefreshPeriod * 1000);
+            return () => clearInterval(interval);
+
+        }
+    }, [settings]);
 
 
     const computeDistance = (story) => {
@@ -232,9 +308,19 @@ export default function App() {
     const controlContext = {
         requestLocation: () => setLocationRequestNeeded(true),
         refresh: () => setFetchNeeded(true),
-        lock: (x) => { console.log('Locking ' + x); setUnlockedSet(unlockedSet.delete(x)); },
-        unlock: (x) => { console.log('Unlocking ' + x); setUnlockedSet(unlockedSet.add(x)) },
-        clearUnlocks: () => { console.log('Clearing all unlocks'); setUnlockedSet(unlockedSet.clear()) }
+        lock: (x) => {
+            console.log('Locking ' + x);
+            setUnlockedSet(unlockedSet.delete(x));
+        },
+        unlock: (x) => {
+            console.log('Unlocking ' + x);
+            setAuxiliaryMap(auxiliaryMap.update(x, {},
+                (v) => { return { ...v, unlockTime: Date.now() } }));
+            setUnlockedSet(unlockedSet.add(x))
+        },
+        clearUnlocks: () => { console.log('Clearing all unlocks'); setUnlockedSet(unlockedSet.clear()) },
+        settings: settings,
+        setSettings: setSettings
     }
 
     const filterByTriggers = (stories) =>
@@ -257,7 +343,7 @@ export default function App() {
     const storyContext = {
         storyData: filterByTriggers(storyData),
         unlockedSet: unlockedSet,
-        getUrl: (suffix) => { return suffix ? apiUrl + suffix : 'noimage'; },
+        auxiliaryMap: auxiliaryMap,
         fetchStatus: fetchStatus,
     }
     // const colorScheme = useColorScheme();
