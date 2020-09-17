@@ -1,6 +1,7 @@
 import Constants from "expo-constants"
 
 
+console.log(Constants.manifest)
 
 export const apiUrl = Constants.manifest.extra.api_url
 export const formUrl = Constants.manifest.extra.form_url

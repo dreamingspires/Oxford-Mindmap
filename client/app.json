@@ -16,6 +16,9 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "android": {
+      "package": "com.dreamingspires.oxford_mindmap"
+    },
     "ios": {
       "supportsTablet": true
     },
