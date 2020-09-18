@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from flask_admin import Admin
 from depot.manager import DepotManager
 from flask_admin.contrib.sqla import ModelView
@@ -35,6 +36,7 @@ app.config.from_object('secret_config')
 # Register extensions with app
 login_manager = LoginManager(app)
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 admin = Admin(app, name='Oxford Mindmap Admin', template_mode='bootstrap3', \
         index_view=AdminHomeView())
 
