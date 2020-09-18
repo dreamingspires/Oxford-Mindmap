@@ -9,7 +9,8 @@ import { ThemeProvider } from 'react-native-elements'
 import { NavigationContainer } from '@react-navigation/native';
 import { RootNavigator } from './routes'
 
-import SafeAreaView from 'react-native-safe-area-view';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import SafeAreaView from 'react-native-safe-area-view'
 
 import {
     StoriesContext,
@@ -353,22 +354,24 @@ export default function App() {
     // console.log(location)
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <ThemeProvider theme={theme} useDark={colorScheme === 'dark'}>
-                <StoriesContext.Provider value={storyContext}>
-                    <LocationContext.Provider value={locationContext}>
-                        <ControlsContext.Provider value={controlContext}>
-                            <TriggerContext.Provider value={triggerContext}>
-                                <NavigationContainer>
-                                    <StatusBar style="auto" hidden={false} />
-                                    <RootNavigator />
-                                </NavigationContainer>
-                            </TriggerContext.Provider >
-                        </ControlsContext.Provider>
-                    </LocationContext.Provider>
-                </StoriesContext.Provider>
-            </ThemeProvider>
-        </SafeAreaView>
+        <SafeAreaProvider>
+            <SafeAreaView style={{ flex: 1 }}>
+                <ThemeProvider theme={theme} useDark={colorScheme === 'dark'}>
+                    <StoriesContext.Provider value={storyContext}>
+                        <LocationContext.Provider value={locationContext}>
+                            <ControlsContext.Provider value={controlContext}>
+                                <TriggerContext.Provider value={triggerContext}>
+                                    <NavigationContainer>
+                                        <StatusBar style="auto" hidden={false} />
+                                        <RootNavigator />
+                                    </NavigationContainer>
+                                </TriggerContext.Provider >
+                            </ControlsContext.Provider>
+                        </LocationContext.Provider>
+                    </StoriesContext.Provider>
+                </ThemeProvider>
+            </SafeAreaView>
+        </SafeAreaProvider>
     );
 }
 
