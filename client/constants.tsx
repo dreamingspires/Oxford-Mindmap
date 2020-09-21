@@ -2,7 +2,7 @@ import Constants from "expo-constants"
 import { Dimensions } from 'react-native';
 
 
-console.log(Constants.manifest)
+// console.log(Constants.manifest)
 
 
 const width = Dimensions.get('window').width;
@@ -48,12 +48,15 @@ const sanitizeStory = (story) => {
         // .forEach(k => console.log(k));
         .forEach(k => story[k] = defaults.hasOwnProperty(k)
             ? defaults[k]()
-            : (() => { console.log(`Failed to sanitize property ${k} in story ${story.id}`); return null })());
+            : (() => {
+                console.log(`Failed to sanitize property ${k} in story ${story.id}`);
+                return null
+            })());
     return story;
 }
 
 export const reformatStoryData = (json: Object): Object[] => {
-    console.log('Reformatting raw story data')
+    // console.log('Reformatting raw story data')
     return Object.entries(json).map(([k, v]) => sanitizeStory({ ...v, id: k }))
 }
 

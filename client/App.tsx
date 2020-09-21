@@ -100,7 +100,10 @@ export default function App() {
 
         let subscription = requestPermission()
             .then(registerLocation)
-            .catch(() => { console.log('Failed to get location permisson'); return { remove: () => { } } })
+            .catch(() => {
+                console.log('Failed to get location permisson');
+                return { remove: () => { } }
+            })
             .finally(() => setLocationRequestNeeded(false))
 
         return () => {
@@ -108,16 +111,6 @@ export default function App() {
             console.log('Unsubscribed from location service')
         }
     }, [dummyFlipper]);
-
-
-
-
-
-    useEffect(() => {
-        // dev hack for clearing cache on every restart
-        // AsyncStorage.multiRemove(['stories', 'unlockedSet'], (err) => {})
-    })
-
 
 
     // auxiliary
@@ -134,7 +127,7 @@ export default function App() {
     // store auxiliary to local storage
     useEffect(() => {
         if (auxiliaryReady) {
-            console.log('Storing auxiliary map')
+            // console.log('Storing auxiliary map')
             AsyncStorage.setItem('auxiliaryMap', JSON.stringify(auxiliaryMap.toArray()))
                 .catch((error) => console.log(error))
         }
@@ -156,7 +149,7 @@ export default function App() {
     // store to local storage
     useEffect(() => {
         if (settingsReady) {
-            console.log('Storing settings')
+            // console.log('Storing settings')
             AsyncStorage.setItem('settings', JSON.stringify(settings))
                 .catch((error) => console.log(error))
         }
@@ -176,7 +169,7 @@ export default function App() {
     // store unlocked to local storage
     useEffect(() => {
         if (unlockedReady) {
-            console.log('Storing unlocked set')
+            // console.log('Storing unlocked set')
             AsyncStorage.setItem("unlockedSet", JSON.stringify(unlockedSet.toArray()))
                 .catch((error) => console.log(error))
         }
@@ -196,7 +189,7 @@ export default function App() {
     // store blacklist to local storage
     useEffect(() => {
         if (unlockedReady) {
-            console.log('Storing trigger blacklist')
+            // console.log('Storing trigger blacklist')
             AsyncStorage.setItem("blacklist", JSON.stringify(blacklistSet.toArray()))
                 .catch((error) => console.log(error))
         }
@@ -216,7 +209,7 @@ export default function App() {
                         { cache: 'no-cache' })
                         .then((response) => response.json())
                     // await new Promise(r => setTimeout(r, 5000));
-                    console.log("Remote stories: ", Object.keys(stories).length)
+                    // console.log("Remote stories: ", Object.keys(stories).length)
                     setFetchStatus(StoryFetchStatus.Done);
                     return stories;
                 }
@@ -232,7 +225,7 @@ export default function App() {
                     const stories = await AsyncStorage.getItem('stories')
                         .then((val) => JSON.parse(val || '{}'))
                     // await new Promise(r => setTimeout(r, 2000));
-                    console.log("Local stories: ", Object.keys(stories).length)
+                    // console.log("Local stories: ", Object.keys(stories).length)
                     return stories;
                 }
                 catch (error) {
@@ -252,7 +245,7 @@ export default function App() {
                 .then(() => fetchRemote)
                 .then(stories => {
                     setRawStoryData(stories);
-                    console.log('Storing freshly fetched stories');
+                    // console.log('Storing freshly fetched stories');
                     AsyncStorage.setItem('stories', JSON.stringify(stories))
                         .catch((error) => console.log(error));
                 })
@@ -269,7 +262,7 @@ export default function App() {
             setKnownTriggers(extractTWs(stories));
         }
         else {
-            console.log('Not updating storyData because new version is deeply equal')
+            // console.log('Not updating storyData because new version is deeply equal')
         }
     }, [rawStoryData])
 
@@ -279,7 +272,7 @@ export default function App() {
         if (settings.autoRefresh) {
             const interval = setInterval(
                 () => {
-                    console.log('Auto-refresh initiated')
+                    // console.log('Auto-refresh initiated')
                     setFetchNeeded(true);
                 },
                 autoRefreshPeriod * 1000);
@@ -309,16 +302,19 @@ export default function App() {
         requestLocation: () => setLocationRequestNeeded(true),
         refresh: () => setFetchNeeded(true),
         lock: (x) => {
-            console.log('Locking ' + x);
+            // console.log('Locking ' + x);
             setUnlockedSet(unlockedSet.delete(x));
         },
         unlock: (x) => {
-            console.log('Unlocking ' + x);
+            // console.log('Unlocking ' + x);
             setAuxiliaryMap(auxiliaryMap.update(x, {},
                 (v) => { return { ...v, unlockTime: Date.now() } }));
             setUnlockedSet(unlockedSet.add(x))
         },
-        clearUnlocks: () => { console.log('Clearing all unlocks'); setUnlockedSet(unlockedSet.clear()) },
+        clearUnlocks: () => {
+            // console.log('Clearing all unlocks');
+            setUnlockedSet(unlockedSet.clear())
+        },
         settings: settings,
         setSettings: setSettings
     }

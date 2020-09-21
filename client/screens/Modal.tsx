@@ -86,7 +86,7 @@ export const ModalScreen = (props) => {
             <ScrollView contentContainerStyle={{ paddingRight: 14 }}>
                 {makeHeader(story)}
                 <Text
-                    onPress={() => console.log(story)}
+                    // onPress={() => console.log(story)}
                     style={{ fontSize: 15 }}
                 >
                     {story.text}
