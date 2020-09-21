@@ -75,7 +75,7 @@ export const StoryFloat = (props) => {
         <View pointerEvents="box-none" style={{ flex: 1, justifyContent: 'space-between', flexDirection: 'column-reverse' }}>
             <Card containerStyle={{ opacity: 0.8, marginBottom: 15 }}>
                 <Card.Title
-                    onPress={props.unlock}    // dev hack
+                    // onPress={props.unlock}    // dev hack
                 >{story.title}</Card.Title>
                 <Card.FeaturedSubtitle>
                     <Text>{story.description}</Text>
