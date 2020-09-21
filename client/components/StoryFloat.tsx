@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { View, ScrollView, ActivityIndicator } from 'react-native'
+import { View, ScrollView, ActivityIndicator, Image } from 'react-native'
 
-import { Card, Icon, Image, Text, Button } from 'react-native-elements'
+import { Card, Icon, Text, Button } from 'react-native-elements'
 import { TWText } from '../components/StoryElements'
 
 import { ControlsContext, LocationContext, StoriesContext, StoryFetchStatus } from '../contexts'
@@ -49,14 +49,22 @@ export const StoryFloat = (props) => {
         const uri = getImageUrl(story.display_image);
         if (uri === 'noimage') return null;
         else return (
-            <Card containerStyle={{ opacity: 0.8, marginTop: 15, padding: 5 }}>
-                <Card.Image
-                    source={{ uri: uri }}
-                    style={{ height: window.height/4, margin: 0 }}
-                    resizeMode={'contain'}
-                    PlaceholderContent={<ActivityIndicator size='large' />}
-                />
-            </Card>
+            // This makes presses propagate through the image,
+            // which actually makes using the map nicer
+            <Image
+                source={{ uri: uri }}
+                style={{ height: window.height / 4, margin: 15, borderRadius: 10, opacity: 0.8 }}
+                resizeMode={'contain'}
+                // PlaceholderContent={<ActivityIndicator size='large' />}
+            />
+            // <Card containerStyle={{ opacity: 0.8, marginTop: 15, padding: 5 }}>
+            //     <Card.Image
+            //         source={{ uri: uri }}
+            //         style={{ height: window.height/4, margin: 0 }}
+            //         resizeMode={'contain'}
+            //         PlaceholderContent={<ActivityIndicator size='large' />}
+            //     />
+            // </Card>
         )
     }
 

@@ -33,7 +33,6 @@ import {
     autoRefreshPeriod,
 } from './constants'
 
-const theme = {};
 
 export default function App() {
 
@@ -347,29 +346,24 @@ export default function App() {
         auxiliaryMap: auxiliaryMap,
         fetchStatus: fetchStatus,
     }
-    // const colorScheme = useColorScheme();
-    const colorScheme = 'light'
 
-    // console.log(colorScheme)
     // console.log(location)
 
     return (
         <SafeAreaProvider>
             <SafeAreaView style={{ flex: 1 }}>
-                <ThemeProvider theme={theme} useDark={colorScheme === 'dark'}>
-                    <StoriesContext.Provider value={storyContext}>
-                        <LocationContext.Provider value={locationContext}>
-                            <ControlsContext.Provider value={controlContext}>
-                                <TriggerContext.Provider value={triggerContext}>
-                                    <NavigationContainer>
-                                        <StatusBar style="auto" hidden={false} />
-                                        <RootNavigator />
-                                    </NavigationContainer>
-                                </TriggerContext.Provider >
-                            </ControlsContext.Provider>
-                        </LocationContext.Provider>
-                    </StoriesContext.Provider>
-                </ThemeProvider>
+                <StoriesContext.Provider value={storyContext}>
+                    <LocationContext.Provider value={locationContext}>
+                        <ControlsContext.Provider value={controlContext}>
+                            <TriggerContext.Provider value={triggerContext}>
+                                <NavigationContainer>
+                                    <StatusBar style="auto" hidden={false} />
+                                    <RootNavigator />
+                                </NavigationContainer>
+                            </TriggerContext.Provider >
+                        </ControlsContext.Provider>
+                    </LocationContext.Provider>
+                </StoriesContext.Provider>
             </SafeAreaView>
         </SafeAreaProvider>
     );

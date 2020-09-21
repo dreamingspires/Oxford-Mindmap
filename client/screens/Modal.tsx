@@ -47,7 +47,7 @@ export const ModalScreen = (props) => {
                 <Card.Image
                     key={1}
                     source={{ uri: uri }}
-                    style={{ height: window.height/4, margin: 15 }}
+                    style={{ height: window.height / 4, margin: 15 }}
                     resizeMode={'contain'}
                     PlaceholderContent={<ActivityIndicator size='large' />}
                 />
@@ -85,7 +85,10 @@ export const ModalScreen = (props) => {
         }}>
             <ScrollView contentContainerStyle={{ paddingRight: 14 }}>
                 {makeHeader(story)}
-                <Text onPress={() => console.log(story)}>
+                <Text
+                    onPress={() => console.log(story)}
+                    style={{ fontSize: 15 }}
+                >
                     {story.text}
                 </Text>
             </ScrollView>
