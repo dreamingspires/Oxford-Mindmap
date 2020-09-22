@@ -1,23 +1,24 @@
 
 /* keys.json:
 {
-    "maps": "AAAA...AAAA"
+    "maps_android": "AAAA...AAAA",
+    "maps_ios": "BBBB...BBBB"
 }
 */
-import { maps } from './keys.json'
+import { maps_android, maps_ios } from './keys.json'
 
 export default ({ config }) => {
     return {
         android: {
             config: {
                 googleMaps: {
-                    apiKey: maps
+                    apiKey: maps_android
                 }
             }
         },
         ios: {
             config: {
-                googleMapsApiKey: maps
+                googleMapsApiKey: maps_ios
             }
         },
         extra: {
