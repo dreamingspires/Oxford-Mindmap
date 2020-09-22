@@ -10,6 +10,8 @@ import { maps_android, maps_ios } from './keys.json'
 export default ({ config }) => {
     return {
         android: {
+            package: "dev.dreamingspires.oxford_mindmap",
+            permissions: ["ACCESS_FINE_LOCATION"],
             config: {
                 googleMaps: {
                     apiKey: maps_android
@@ -17,6 +19,11 @@ export default ({ config }) => {
             }
         },
         ios: {
+            bundleIdentifier: "dev.dreamingspires.oxford-mindmap",
+            supportsTablet: true,
+            infoPlist: {
+                NSLocationWhenInUseUsageDescription: "This app uses location to unlock content based on geographical proximity."
+            },
             config: {
                 googleMapsApiKey: maps_ios
             }
