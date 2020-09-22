@@ -4,11 +4,11 @@
     "slug": "oxford-mindmap",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/brain/1024.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/brain_transparent_with_text.png",
       "resizeMode": "contain",
-      "backgroundColor": "#aaffff"
+      "backgroundColor": "#ffffff"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -17,13 +17,15 @@
       "**/*"
     ],
     "android": {
-      "package": "com.dreamingspires.oxford_mindmap"
+      "package": "com.dreamingspires.oxford_mindmap",
+      "permissions": ["ACCESS_FINE_LOCATION"]
     },
     "ios": {
-      "supportsTablet": true
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
+      "bundleIdentifier": "com.dreamingspires.oxford-mindmap",
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "This app uses location to unlock content based on geographical proximity."
+      }
     },
   }
 }

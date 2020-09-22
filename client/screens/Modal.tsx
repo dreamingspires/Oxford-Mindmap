@@ -7,7 +7,7 @@ import { Button, Text, Card, Icon } from 'react-native-elements'
 import { StoryListItem } from '../components/StoryListItem'
 import { AuthorText, TWText, isAuthorTextEmpty, isTWTextEmpty } from '../components/StoryElements'
 import { ControlsContext, StoriesContext } from '../contexts'
-import { getImageUrl } from '../constants'
+import { getImageUrl, window } from '../constants'
 
 export const ModalScreen = (props) => {
 
@@ -47,7 +47,7 @@ export const ModalScreen = (props) => {
                 <Card.Image
                     key={1}
                     source={{ uri: uri }}
-                    style={{ height: 200, margin: 15 }}
+                    style={{ height: window.height / 4, margin: 15 }}
                     resizeMode={'contain'}
                     PlaceholderContent={<ActivityIndicator size='large' />}
                 />
@@ -85,7 +85,10 @@ export const ModalScreen = (props) => {
         }}>
             <ScrollView contentContainerStyle={{ paddingRight: 14 }}>
                 {makeHeader(story)}
-                <Text onPress={() => console.log(story)}>
+                <Text
+                    onPress={() => console.log(story)}
+                    style={{ fontSize: 15 }}
+                >
                     {story.text}
                 </Text>
             </ScrollView>

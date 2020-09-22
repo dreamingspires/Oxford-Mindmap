@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TouchableOpacity } from 'react-native'
+import { View, TouchableOpacity, StyleSheet, Image } from 'react-native'
 import { Text, Button, Icon } from 'react-native-elements'
 
 import { createStackNavigator } from '@react-navigation/stack';
@@ -81,21 +81,15 @@ export const RootNavigator = () => {
             <Stack.Screen name="Tabs" component={TabNavigator}
                 options={({ navigation }) => ({
                     title: "Oxford MindMap",
+                    headerLeft: () => <Image
+                        style={{ marginLeft: 10, width: 50, height: 50 }}
+                        source={require('./assets/brain_transparent.png')}
+                        resizeMode='contain'
+                    />,
                     headerRight: () => (
-                        // <TouchableOpacity
-                        //     onPress={() => navigation.navigate("Settings")}
-                        // >
-                        //     <View style={{ justifyContent: 'center', alignContent: 'center', paddingRight: 15 }}>
-                        //         <Icon
-                        //             // size={30}
-                        //             name="settings"
-                        //         />
-                        //     </View>
-                        // </TouchableOpacity>
                         <Button
                             icon={{
                                 name: "settings",
-                                // color: "black"
                             }}
                             TouchableComponent={TouchableOpacity}
                             type='clear'

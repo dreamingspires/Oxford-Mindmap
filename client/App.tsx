@@ -9,7 +9,8 @@ import { ThemeProvider } from 'react-native-elements'
 import { NavigationContainer } from '@react-navigation/native';
 import { RootNavigator } from './routes'
 
-import SafeAreaView from 'react-native-safe-area-view';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import SafeAreaView from 'react-native-safe-area-view'
 
 import {
     StoriesContext,
@@ -32,7 +33,6 @@ import {
     autoRefreshPeriod,
 } from './constants'
 
-const theme = {};
 
 export default function App() {
 
@@ -346,15 +346,12 @@ export default function App() {
         auxiliaryMap: auxiliaryMap,
         fetchStatus: fetchStatus,
     }
-    // const colorScheme = useColorScheme();
-    const colorScheme = 'light'
 
-    // console.log(colorScheme)
     // console.log(location)
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <ThemeProvider theme={theme} useDark={colorScheme === 'dark'}>
+        <SafeAreaProvider>
+            <SafeAreaView style={{ flex: 1 }}>
                 <StoriesContext.Provider value={storyContext}>
                     <LocationContext.Provider value={locationContext}>
                         <ControlsContext.Provider value={controlContext}>
@@ -367,8 +364,8 @@ export default function App() {
                         </ControlsContext.Provider>
                     </LocationContext.Provider>
                 </StoriesContext.Provider>
-            </ThemeProvider>
-        </SafeAreaView>
+            </SafeAreaView>
+        </SafeAreaProvider>
     );
 }
 
