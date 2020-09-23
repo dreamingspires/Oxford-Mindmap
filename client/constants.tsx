@@ -24,7 +24,7 @@ export const defaultSettings = {
 export const autoRefreshPeriod = 60;
 
 // in metres
-export const storyRadius = 10;
+export const storyRadius = 40;
 
 export const oxfordRegion = {
     latitude: 51.7519,
