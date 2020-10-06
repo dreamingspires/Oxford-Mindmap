@@ -54,28 +54,27 @@ export default function App() {
     const [blacklistSet, setBlacklistSet] = useState(ISet());
     const [blacklistReady, setBlacklistReady] = useState(false);
 
-    // using undefined here instead of null is a massive kludge
-    // only null triggers the location error, and will only be set after at least
-    // one failed attempt to get permission
-    const [location, setLocation] = useState(undefined);
-    const [locationRequestNeeded, setLocationRequestNeeded] = useState(true);
+    const [location, setLocation] = useState(null);
+    const [locationWorking, setLocationWorking] = useState(true);
+    const [locationRequestSuggested, setlocationRequestSuggested] = useState(false);
+    const [locationRequestNeeded, setLocationRequestNeeded] = useState(false);
     const [dummyFlipper, setDummyFlipper] = useState(true);
 
-
     // location
+
+    // invoke a subscription to location service, asking for permission if necessary
     useEffect(() => {
         if (locationRequestNeeded) {
             setDummyFlipper(!dummyFlipper);
         }
     }, [locationRequestNeeded])
 
+    // only run on dummyFlipper changes, so that unsubscribing works properly
     useEffect(() => {
 
         const requestPermission = async () => {
             let { status } = await Location.requestPermissionsAsync();
             if (status !== 'granted') {
-                // first time will change it from undefined to null
-                setLocation(null);
                 console.log('Permission to access location was denied');
             }
             else {
@@ -84,24 +83,46 @@ export default function App() {
         }
 
         const registerLocation = async () => {
-            setLocation(await Location.getLastKnownPositionAsync());
             let subscription = await Location.watchPositionAsync(
                 {
                     accuracy: Location.Accuracy.High,
                     timeInterval: 1000,
                     distanceInterval: 1
                 },
-                (location) => {
-                    setLocation(location);
+                (newLocation) => {
+                    setLocation(newLocation);
                 });
+            // consider location working after we get a subscription without exceptions
+            setLocationWorking(true);
             console.log('Subscribed to location service');
             return subscription;
         }
 
+        const quickLocation = async () => {
+            try {
+                console.log('Trying to get quick location.')
+                let newLocation = await Location.getLastKnownPositionAsync();
+                // only assign if we have nothing
+                if (newLocation && !location) {
+                    setLocation(newLocation);
+                    console.log('Successfully set a quick location.')
+                } else if (!location) {
+                    console.log('Quick location was too slow.')
+                } else {
+                    console.log('Quick location was falsy.')
+                }
+            }
+            catch (e) {
+                console.log('Failed to get quick location: ' + e);
+            }
+        }
+
         let subscription = requestPermission()
-            .then(registerLocation)
-            .catch(() => {
-                console.log('Failed to get location permisson');
+            .then(() => Promise.all([registerLocation(), quickLocation()]))
+            .then(values => values[0])
+            .catch((e) => {
+                setLocationWorking(false);
+                console.log('Failed to register for location updates: ' + e);
                 return { remove: () => { } }
             })
             .finally(() => setLocationRequestNeeded(false))
@@ -111,6 +132,37 @@ export default function App() {
             console.log('Unsubscribed from location service')
         }
     }, [dummyFlipper]);
+
+
+    // request re-subscription if location is known not to be working
+    useEffect(() => {
+        if (locationRequestSuggested) {
+            setlocationRequestSuggested(false);
+            if (!locationWorking) {
+                console.log('Automatically re-subscribing to location service.')
+                setLocationRequestNeeded(true);
+            }
+        }
+    }, [locationRequestSuggested])
+
+    // observe status of location settings, suggest a re-subscription if a quiet one is possible
+    useEffect(() => {
+        const interval = setInterval(
+            () => {
+                Promise.all([Location.getPermissionsAsync(), Location.hasServicesEnabledAsync()])
+                    .then((values) => {
+                        // if these values change after the check we will at worst emit another permisson request
+                        if (values[1] && values[0].status === 'granted') {
+                            setlocationRequestSuggested(true);
+                        }
+                        else {
+                            setLocationWorking(false);
+                        }
+                    });
+            },
+            locationWorking ? 2000 : 200)
+        return () => clearInterval(interval);
+    }, [locationWorking])
 
 
     // auxiliary
@@ -293,7 +345,8 @@ export default function App() {
 
     const locationContext = {
         location: location,
-        awaitingLocation: locationRequestNeeded,
+        locationWorking: locationWorking,
+        awaitingLocation: locationRequestNeeded && !locationWorking,
         distance: (story) => { return computeDistance(story); },
         distanceAdjusted: (story) => { return computeDistance(story) - storyRadius; }
     };

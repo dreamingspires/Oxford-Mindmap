@@ -17,18 +17,14 @@ import { oxfordRegion } from '../constants'
 export const MapScreen = (props) => {
 
     const { storyData, unlockedSet } = useContext(StoriesContext)
-    const { location, awaitingLocation, distanceAdjusted } = useContext(LocationContext)
+    const { location, locationWorking, awaitingLocation, distanceAdjusted } = useContext(LocationContext)
     const { refresh, lock, unlock, requestLocation } = useContext(ControlsContext)
 
     const [currentStory, setCurrentStory] = useState(null)
     const isSelected = (id) => { return currentStory !== null && id == currentStory.id }
 
     const makeLocationError = () => {
-        // this is a check against null, not truthiness, because location
-        // is undefined before the first location permisson rejection,
-        // and null afterwards
-        // other part of the massive kludge scheme
-        if (location !== null) return null;
+        if (locationWorking) return null;
         else {
             return (
                 <Button
@@ -96,6 +92,7 @@ export const MapScreen = (props) => {
                     style={styles.map}
                     initialRegion={oxfordRegion}
                     showsUserLocation={true}
+                    showsMyLocationButton={true}
                     onPress={() => setCurrentStory(null)}
                 >
                     {storyData.map((story) => <Marker

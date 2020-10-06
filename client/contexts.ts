@@ -24,6 +24,7 @@ export const TriggerContext = React.createContext({
 
 export const LocationContext = React.createContext({
     location: null,
+    locationWorking: false,
     awaitingLocation: false,
     distance: (x) => { return Infinity; },
     distanceAdjusted: (x) => { return Infinity; }
