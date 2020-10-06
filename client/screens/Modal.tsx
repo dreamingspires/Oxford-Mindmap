@@ -81,7 +81,7 @@ export const ModalScreen = (props) => {
             justifyContent: 'center',
             alignItems: 'center',
             marginBottom: 15, marginTop: 15,
-            paddingBottom: 10, paddingLeft: 15, paddingRight: 1
+            paddingBottom: 15, paddingLeft: 15, paddingRight: 1
         }}>
             <ScrollView contentContainerStyle={{ paddingRight: 14 }}>
                 {makeHeader(story)}
@@ -92,9 +92,6 @@ export const ModalScreen = (props) => {
                     {story.text}
                 </Text>
             </ScrollView>
-            <View style={{ marginTop: 10, paddingRight: 14 }}>
-                {makeButton(story)}
-            </View>
         </Card>
     );
 }
