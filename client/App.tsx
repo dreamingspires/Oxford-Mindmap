@@ -24,6 +24,8 @@ import { AsyncStorage } from 'react-native';
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib'
 
+import { portal } from './portal'
+
 import {
     reformatStoryData,
     apiUrl,
@@ -90,7 +92,7 @@ export default function App() {
                     distanceInterval: 1
                 },
                 (newLocation) => {
-                    setLocation(newLocation);
+                    setLocation(portal.teleport(newLocation));
                 });
             // consider location working after we get a subscription without exceptions
             setLocationWorking(true);
@@ -104,7 +106,7 @@ export default function App() {
                 let newLocation = await Location.getLastKnownPositionAsync();
                 // only assign if we have nothing
                 if (newLocation && !location) {
-                    setLocation(newLocation);
+                    setLocation(portal.teleport(newLocation));
                     console.log('Successfully set a quick location.')
                 } else if (!location) {
                     console.log('Quick location was too slow.')

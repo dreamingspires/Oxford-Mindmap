@@ -14,6 +14,8 @@ import { Button } from 'react-native-elements'
 
 import { oxfordRegion } from '../constants'
 
+import { orangeMarker, blueMarker, teleportedMarker } from '../portal'
+
 export const MapScreen = (props) => {
 
     const { storyData, unlockedSet } = useContext(StoriesContext)
@@ -95,6 +97,9 @@ export const MapScreen = (props) => {
                     showsMyLocationButton={true}
                     onPress={() => setCurrentStory(null)}
                 >
+                    {teleportedMarker(location)}
+                    {orangeMarker}
+                    {blueMarker}
                     {storyData.map((story) => <Marker
                         // https://github.com/react-native-community/react-native-maps/issues/1611
                         // workaround for marker update issue
