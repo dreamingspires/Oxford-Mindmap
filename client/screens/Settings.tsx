@@ -61,6 +61,17 @@ export const SettingsScreen = (props) => {
                         />
                     </ListItem>
                     <ListItem
+                        bottomDivider
+                        onPress={() => {
+                            setSettings({ ...settings, tutorial: true });
+                            props.navigation.goBack();
+                        }}
+                    >
+                        <ListItem.Content>
+                            <ListItem.Title>Show Tutorial</ListItem.Title>
+                        </ListItem.Content>
+                    </ListItem>
+                    <ListItem
                         // bottomDivider
                         onPress={
                             () => Alert.alert(

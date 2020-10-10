@@ -14,6 +14,8 @@ import { Button } from 'react-native-elements'
 
 import { oxfordRegion } from '../constants'
 
+import { makePopup } from '../components/TutorialPopup'
+
 export const MapScreen = (props) => {
 
     const { storyData, unlockedSet } = useContext(StoriesContext)
@@ -112,6 +114,7 @@ export const MapScreen = (props) => {
                 </MapView>
                 {makeFloat(currentStory)}
             </View>
+            {makePopup()}
         </View>
     );
 }

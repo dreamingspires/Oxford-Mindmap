@@ -18,6 +18,7 @@ export const formUrl = Constants.manifest.extra.form_url
 
 export const defaultSettings = {
     autoRefresh: true,
+    tutorial: true
 }
 
 // in seconds
